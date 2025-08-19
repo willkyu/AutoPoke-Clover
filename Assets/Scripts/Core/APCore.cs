@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 
 
+
 public class APCore : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -16,36 +17,37 @@ public class APCore : MonoBehaviour
 
     private Detector detector;
 
-    [Header("Alpha")]
-    public string alphaMode = "Wilds";
-    public bool LR = true;
-    public Text LR_btn_text;
-    private AlphaFrLgStarters alphaFrLgStarters;
-    private AlphaWilds alphaWilds;
+    // [Header("Alpha")]
+    // public string alphaMode = "Wilds";
+    // public bool LR = true;
+    // public Text LR_btn_text;
+    // private AlphaFrLgStarters alphaFrLgStarters;
+    // private AlphaWilds alphaWilds;
 
 
 
-    private Dictionary<string, float> classThresholds = new Dictionary<string, float>
-{
-    // { "black", 0.8f },
-    { "dialogue", 0.6f },
-    { "RSE_s", 0.5f },
-    { "RSE_ns", 0.5f },
-    { "shiny_star", 0.6f },
-    { "next", 0.25f },
-    { "can_run", 0.5f },
-    { "FrLg_s", 0.5f },
-    { "FrLg_ns", 0.5f },
-    { "before_enter", 0.8f },
-    { "bite_eng", 0.5f },
-    { "fish_gone_eng", 0.5f },
-    { "get_fish_eng", 0.45f },
-    { "no_fish_eng", 0.5f },
-    { "bite_jpn", 0.5f },
-    { "fish_gone_jpn", 0.5f },
-    { "get_fish_jpn", 0.6f },
-    { "no_fish_jpn", 0.5f },
-};
+    private readonly Dictionary<DetectionClass, float> classThresholds =
+        new Dictionary<DetectionClass, float>
+    {
+    { DetectionClass.Dialogue, 0.6f },
+    { DetectionClass.RSE_s, 0.5f },
+    { DetectionClass.RSE_ns, 0.5f },
+    { DetectionClass.ShinyStar, 0.6f },
+    { DetectionClass.Next, 0.25f },
+    { DetectionClass.CanRun, 0.5f },
+    { DetectionClass.FrLg_s, 0.5f },
+    { DetectionClass.FrLg_ns, 0.5f },
+    { DetectionClass.BeforeEnter, 0.8f },
+    { DetectionClass.BiteEng, 0.5f },
+    { DetectionClass.FishGoneEng, 0.5f },
+    { DetectionClass.GetFishEng, 0.45f },
+    { DetectionClass.NoFishEng, 0.5f },
+    { DetectionClass.BiteJpn, 0.5f },
+    { DetectionClass.FishGoneJpn, 0.5f },
+    { DetectionClass.GetFishJpn, 0.6f },
+    { DetectionClass.NoFishJpn, 0.5f },
+    };
+
 
 
     private void Awake()
@@ -75,47 +77,47 @@ public class APCore : MonoBehaviour
         // hwnd = windows[0];
     }
 
-    public void AlphaRun()
-    {
-        switch (alphaMode)
-        {
-            case "FrLgStarters":
+    //     public void AlphaRun()
+    //     {
+    //         switch (alphaMode)
+    //         {
+    //             case "FrLgStarters":
 
-                alphaFrLgStarters = new AlphaFrLgStarters(detector);
-                foreach (IntPtr hwnd in windows)
-                {
-                    alphaFrLgStarters.Run(hwnd);
-                }
-                break;
-            case "Wilds":
-                alphaWilds = new AlphaWilds(detector, LR);
-                foreach (IntPtr hwnd in windows)
-                {
-                    alphaWilds.Run(hwnd);
-                }
-                break;
-        }
-    }
+    //                 alphaFrLgStarters = new AlphaFrLgStarters(detector);
+    //                 foreach (IntPtr hwnd in windows)
+    //                 {
+    //                     alphaFrLgStarters.Run(hwnd);
+    //                 }
+    //                 break;
+    //             case "Wilds":
+    //                 alphaWilds = new AlphaWilds(detector, LR);
+    //                 foreach (IntPtr hwnd in windows)
+    //                 {
+    //                     alphaWilds.Run(hwnd);
+    //                 }
+    //                 break;
+    //         }
+    //     }
 
-    public void AlphaLR()
-    {
-        LR = !LR;
-        LR_btn_text.text = LR ? "左右走" : "上下走";
-    }
+    //     public void AlphaLR()
+    //     {
+    //         LR = !LR;
+    //         LR_btn_text.text = LR ? "左右走" : "上下走";
+    //     }
 
-    public void AlphaEnd()
-    {
-        alphaFrLgStarters?.End();
-        alphaWilds?.End();
+    //     public void AlphaEnd()
+    //     {
+    //         alphaFrLgStarters?.End();
+    //         alphaWilds?.End();
 
-    }
+    //     }
 
-    private void OnApplicationQuit()
-    {
-        alphaFrLgStarters?.End();
-        alphaWilds?.End();
-#if !UNITY_EDITOR
-        System.Diagnostics.Process.GetCurrentProcess().Kill();//当前杀死进程
-#endif
-    }
+    //     private void OnApplicationQuit()
+    //     {
+    //         alphaFrLgStarters?.End();
+    //         alphaWilds?.End();
+    // #if !UNITY_EDITOR
+    //         System.Diagnostics.Process.GetCurrentProcess().Kill();//当前杀死进程
+    // #endif
+    //     }
 }

@@ -13,15 +13,15 @@ public class Detector
     private readonly ConcurrentQueue<int> available;
     private readonly object lockObj = new object();
     public ModelAsset modelAsset;
-    public List<string> classNames;
-    private Dictionary<string, float> classThresholds;
+    public List<DetectionClass> classNames;
+    private Dictionary<DetectionClass, float> classThresholds;
     private float blackThresholds = 0.8f;
     private int activeCount;
 
-    private static UnityEngine.UI.Text fpsText;
+    // private static UnityEngine.UI.Text fpsText;
 
 
-    public Detector(int maxSize, List<DetectCore> detectCores, ModelAsset modelAsset, Dictionary<string, float> classThresholds)
+    public Detector(int maxSize, List<DetectCore> detectCores, ModelAsset modelAsset, Dictionary<DetectionClass, float> classThresholds)
     {
         if (detectCores == null || detectCores.Count == 0)
             throw new ArgumentException("detectors list must not be empty");
@@ -38,14 +38,14 @@ public class Detector
         for (int i = 0; i < detectCores.Count; i++)
             available.Enqueue(i);
 
-        MainThreadDispatcher.Enqueue(() =>
-        {
-            if (fpsText == null)
-                fpsText = GameObject.Find("FPS")?.GetComponent<UnityEngine.UI.Text>();
-        });
+        // MainThreadDispatcher.Enqueue(() =>
+        // {
+        //     if (fpsText == null)
+        //         fpsText = GameObject.Find("FPS")?.GetComponent<UnityEngine.UI.Text>();
+        // });
     }
 
-    public static Detector Init(int initSize, int maxSize, ModelAsset modelAsset, Dictionary<string, float> classThresholds)
+    public static Detector Init(int initSize, int maxSize, ModelAsset modelAsset, Dictionary<DetectionClass, float> classThresholds)
     {
         var detectors = new List<DetectCore>();
         for (int i = 0; i < initSize; i++)
@@ -55,7 +55,7 @@ public class Detector
         return new Detector(maxSize, detectors, modelAsset, classThresholds);
     }
 
-    public Dictionary<string, float> RawDetect(byte[] image, bool detectBlack = false, int timeoutMillis = 1000)
+    public Dictionary<DetectionClass, float> RawDetect(byte[] image, bool detectBlack = false, int timeoutMillis = 1000)
     {
         if (!TryGetAvailableDetector(timeoutMillis, out int detectorId))
         {
@@ -66,7 +66,7 @@ public class Detector
 
         try
         {
-            Dictionary<string, float> res = MainThreadDispatcher.InvokeSync(() =>
+            Dictionary<DetectionClass, float> res = MainThreadDispatcher.InvokeSync(() =>
             {
                 return detectCores[detectorId].Run(image, detectBlack);
             });
@@ -78,9 +78,9 @@ public class Detector
         }
     }
 
-    public List<string> Detect(byte[] image, bool detectBlack = false, int timeoutMillis = 1000)
+    public List<DetectionClass> Detect(byte[] image, bool detectBlack = false, int timeoutMillis = 1000)
     {
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        // var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         if (!TryGetAvailableDetector(timeoutMillis, out int detectorId))
         {
             AddCore();
@@ -91,17 +91,17 @@ public class Detector
         try
         {
             // Dictionary<string, float> res = detectCores[detectorId].Run(image, detectBlack);
-            Dictionary<string, float> res = MainThreadDispatcher.InvokeSync(() =>
+            Dictionary<DetectionClass, float> res = MainThreadDispatcher.InvokeSync(() =>
             {
                 return detectCores[detectorId].Run(image, detectBlack);
             });
-            stopwatch.Stop();
-            float fps = 1000f / stopwatch.ElapsedMilliseconds; // 毫秒转FPS
-                                                               // Debug.Log($"Detector FPS: {fps:F2}");
-            MainThreadDispatcher.Enqueue(() =>
-            {
-                fpsText.text = $"FPS: {fps:F2}";
-            });
+            // stopwatch.Stop();
+            // float fps = 1000f / stopwatch.ElapsedMilliseconds; // 毫秒转FPS
+            // Debug.Log($"Detector FPS: {fps:F2}");
+            // MainThreadDispatcher.Enqueue(() =>
+            // {
+            //     fpsText.text = $"FPS: {fps:F2}";
+            // });
             return classThresholds.Keys.Where(key => classThresholds[key] < res[key]).ToList();
         }
         finally

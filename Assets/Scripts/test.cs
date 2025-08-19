@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using TMPro;
 using Unity.Sentis;
 using UnityEngine;
@@ -24,47 +25,27 @@ namespace test
         private float timer = 0f;
         private Texture2D srcTex;
 
-        private List<string> classNames = new List<string> {
-        "dialogue",
-        "RSE_s",
-        "RSE_ns",
-        "shiny_star",
-        "next",
-        "can_run",
-        "FrLg_s",
-        "FrLg_ns",
-        "before_enter",
-        "bite_eng",
-        "fish_gone_eng",
-        "get_fish_eng",
-        "no_fish_eng",
-        "bite_jpn",
-        "fish_gone_jpn",
-        "get_fish_jpn",
-        "no_fish_jpn",
+        private readonly Dictionary<DetectionClass, float> classThresholds =
+            new Dictionary<DetectionClass, float>
+        {
+    { DetectionClass.Dialogue, 0.6f },
+    { DetectionClass.RSE_s, 0.5f },
+    { DetectionClass.RSE_ns, 0.5f },
+    { DetectionClass.ShinyStar, 0.6f },
+    { DetectionClass.Next, 0.25f },
+    { DetectionClass.CanRun, 0.5f },
+    { DetectionClass.FrLg_s, 0.5f },
+    { DetectionClass.FrLg_ns, 0.5f },
+    { DetectionClass.BeforeEnter, 0.8f },
+    { DetectionClass.BiteEng, 0.5f },
+    { DetectionClass.FishGoneEng, 0.5f },
+    { DetectionClass.GetFishEng, 0.45f },
+    { DetectionClass.NoFishEng, 0.5f },
+    { DetectionClass.BiteJpn, 0.5f },
+    { DetectionClass.FishGoneJpn, 0.5f },
+    { DetectionClass.GetFishJpn, 0.6f },
+    { DetectionClass.NoFishJpn, 0.5f },
         };
-
-        private Dictionary<string, float> classThresholds = new Dictionary<string, float>
-{
-    // { "black", 0.8f },
-    { "dialogue", 0.6f },
-    { "RSE_s", 0.5f },
-    { "RSE_ns", 0.5f },
-    { "shiny_star", 0.6f },
-    { "next", 0.25f },
-    { "can_run", 0.5f },
-    { "FrLg_s", 0.5f },
-    { "FrLg_ns", 0.5f },
-    { "before_enter", 0.8f },
-    { "bite_eng", 0.5f },
-    { "fish_gone_eng", 0.5f },
-    { "get_fish_eng", 0.45f },
-    { "no_fish_eng", 0.5f },
-    { "bite_jpn", 0.5f },
-    { "fish_gone_jpn", 0.5f },
-    { "get_fish_jpn", 0.6f },
-    { "no_fish_jpn", 0.5f },
-};
 
         void Awake()
         {
@@ -73,7 +54,7 @@ namespace test
             // detectorTester = GetComponent<SentisTester>();
             detector = Detector.Init(initSize: 1, maxSize: 2, modelAsset: modelAsset, classThresholds: classThresholds);
 
-            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithText("BongoCat");
+            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithText("Playback");
             if (windows.Count == 0)
             {
                 Debug.LogWarning("❌ 未找到目标窗口");
@@ -88,7 +69,7 @@ namespace test
             if (timer <= 0f)
             {
                 RequestRawScreenshot();
-                timer = 1f / 60f;
+                timer = 1f / 1f;
             }
             timer -= Time.deltaTime;
         }
@@ -102,7 +83,7 @@ namespace test
                 byte[] rawData = Win32Utils.CaptureWindow(hwnd, out int srcWidth, out int srcHeight);
                 float t1 = Time.realtimeSinceStartup;
                 // 测试按键功能
-                Win32Utils.SendKey(hwnd, KeyCode.A);
+                // Win32Utils.SendKey(hwnd, KeyCode.A);
 
                 // 加载原始尺寸截图
                 srcTex = new Texture2D(srcWidth, srcHeight, TextureFormat.RGB24, false);
@@ -130,7 +111,7 @@ namespace test
 
                 float t2 = Time.realtimeSinceStartup;
 
-                Dictionary<string, float> result = detector.RawDetect(rawData, detectBlack: true);
+                Dictionary<DetectionClass, float> result = detector.RawDetect(rawData, detectBlack: true);
                 float t3 = Time.realtimeSinceStartup;
 
                 float captureTime = (t1 - t0) * 1000f;

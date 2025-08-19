@@ -1,0 +1,21 @@
+public enum DetectionClass
+{
+    Black,
+    Dialogue,
+    RSE_s,
+    RSE_ns,
+    ShinyStar,
+    Next,
+    CanRun,
+    FrLg_s,
+    FrLg_ns,
+    BeforeEnter,
+    BiteEng,
+    FishGoneEng,
+    GetFishEng,
+    NoFishEng,
+    BiteJpn,
+    FishGoneJpn,
+    GetFishJpn,
+    NoFishJpn
+}

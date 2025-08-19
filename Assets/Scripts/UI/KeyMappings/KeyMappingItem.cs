@@ -6,13 +6,19 @@ public class KeyMappingItem : MonoBehaviour
 {
     public Text labelText;      // 显示 "Up", "Down" 等
     public Button keyButton;    // 显示当前按键
-    private string keyName;     // 当前是 up/down/a 等字段名
+    private GameKey key;        // 用枚举替代 string
     private bool listening = false;
 
     void Start()
     {
-        this.keyName = labelText.text.ToLower();
-        Debug.Log(this.keyName);
+        // 把 UI 上的文字转成枚举，比如 "Up" → GameKey.Up
+        if (!Enum.TryParse<GameKey>(labelText.text, true, out key))
+        {
+            Debug.LogWarning($"⚠️ 无法解析 GameKey: {labelText.text}");
+            enabled = false; // 禁用这个组件，避免报错
+            return;
+        }
+
         UpdateDisplay();
         keyButton.onClick.AddListener(() => StartListening());
     }
@@ -32,17 +38,16 @@ public class KeyMappingItem : MonoBehaviour
         {
             if (Input.GetKeyDown(code))
             {
-                // ✅ 用新的 Set 方法代替反射
                 try
                 {
-                    Settings.Keys.Set(keyName, code.ToString());
+                    Settings.Keys.Set(key, code.ToString());  // ✅ 用枚举
                     Settings.SaveSettings();
                     listening = false;
                     UpdateDisplay();
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"⚠️ 设置按键失败: {keyName} → {code}. 原因: {ex.Message}");
+                    Debug.LogWarning($"⚠️ 设置按键失败: {key} → {code}. 原因: {ex.Message}");
                 }
                 break;
             }
@@ -53,15 +58,13 @@ public class KeyMappingItem : MonoBehaviour
     {
         try
         {
-            // ✅ 用新的 Get 方法代替反射
-            string keyStr = Settings.Keys.Get(keyName);
+            string keyStr = Settings.Keys.Get(key); // ✅ 用枚举
             keyButton.GetComponentInChildren<Text>().text = keyStr;
-            // Debug.Log(Settings.Keys.A);
         }
         catch (Exception ex)
         {
-            // keyButton.GetComponentInChildren<Text>().text = "Invalid";
-            Debug.LogWarning($"⚠️ 获取按键失败: {keyName}. 原因: {ex.Message}");
+            keyButton.GetComponentInChildren<Text>().text = "Invalid";
+            Debug.LogWarning($"⚠️ 获取按键失败: {key}. 原因: {ex.Message}");
         }
     }
 }

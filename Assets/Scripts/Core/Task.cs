@@ -1,30 +1,49 @@
 using System;
+using System.Collections.Generic;
+using System.Threading;
+
+public enum Language
+{
+    Jpn, Eng
+}
+
+public enum GameVersion
+{
+    RS, E, FrLg
+}
+
+public enum TaskMode
+{
+    Single, Multiple
+}
+
+public enum Function
+{
+    Move, Stationary, Fish
+}
+
+
 
 public class Task
 {
-    public IntPtr hwnd;  // 窗口句柄
+
+    public List<IntPtr> windows;  // 窗口句柄
     public int counter = 0;
-    public bool isEnabled = true;
+    public Language language = Language.Eng;
+    public GameVersion gameVersion = GameVersion.RS;
+    public TaskMode taskMode = TaskMode.Multiple;
+    public Function function = Function.Move;
+    public float speed = 1f;
 
-    // 自定义任务参数（根据你的刷闪逻辑调整）
-    public string targetPokemon;
-    public bool useRepel;
-    public int maxAttempts;
+    private Detector detector;
+    private ControlUtils ctrl;
+    private List<Thread> threads = new List<Thread> { };
 
-    // 可以挂载委托或行为树来定义不同任务逻辑
-    public Action<Task> ExecuteStep;
 
-    public Task(IntPtr window)
+    public Task(TaskMode tm)
     {
-        hwnd = window;
+        taskMode = tm;
     }
 
-    public void RunStep()
-    {
-        if (isEnabled && ExecuteStep != null)
-        {
-            ExecuteStep(this);
-            counter++;
-        }
-    }
+
 }

@@ -6,7 +6,8 @@ using UnityEngine.Rendering;
 
 public class DetectCore
 {
-    private readonly List<string> classNames;
+    private readonly List<DetectionClass> classEnums;
+
     private readonly int numClasses;
     private Worker worker;
     private readonly int width;
@@ -15,14 +16,14 @@ public class DetectCore
     private TensorShape tensorShape;
 
 
-    public DetectCore(ModelAsset modelAsset, List<string> classNames, int width = 480, int height = 320, bool? useGPU = null)
+    public DetectCore(ModelAsset modelAsset, List<DetectionClass> classEnums, int width = 480, int height = 320, bool? useGPU = null)
     {
         useGPU ??= SystemInfo.supportsComputeShaders && SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
 
         var runtimeModel = ModelLoader.Load(modelAsset);
         worker = new Worker(runtimeModel, (bool)useGPU ? BackendType.GPUCompute : BackendType.CPU);
-        this.classNames = classNames;
-        numClasses = classNames.Count;
+        this.classEnums = classEnums;
+        numClasses = classEnums.Count;
         this.width = width;
         this.height = height;
         area = width * height;
@@ -46,7 +47,7 @@ public class DetectCore
         return new Tensor<float>(tensorShape, chwData);
     }
 
-    public Dictionary<string, float> Run(byte[] rawData, bool includeBlack = false)
+    public Dictionary<DetectionClass, float> Run(byte[] rawData, bool includeBlack = false)
     {
         using Tensor<float> tensor = Preprocess(rawData);
         worker.Schedule(tensor);
@@ -68,15 +69,15 @@ public class DetectCore
             }
         }
 
-        var result = new Dictionary<string, float>();
+        var result = new Dictionary<DetectionClass, float>();
         for (int i = 0; i < numClasses; i++)
         {
-            result[classNames[i]] = maxScores[i];
+            result[classEnums[i]] = maxScores[i];
         }
 
         if (includeBlack)
         {
-            result["black"] = ComputeBlackPercent(rawData);
+            result[DetectionClass.Black] = ComputeBlackPercent(rawData);
         }
 
         return result;
