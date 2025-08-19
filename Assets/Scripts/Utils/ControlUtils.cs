@@ -31,4 +31,21 @@ public class ControlUtils
         yield return new WaitForSecondsRealtime(hitDuration);
         KeyUp(gameKey);
     }
+
+    public void KeysHit(GameKey[] gameKeys, float hitDuration = 0.1f)
+    {
+        CoroutineRunner.RunSafe(KeysHitCO(gameKeys, hitDuration / speed));
+    }
+    private IEnumerator KeysHitCO(GameKey[] gameKeys, float hitDuration)
+    {
+        foreach (GameKey key in gameKeys)
+        {
+            KeyDown(key);
+        }
+        yield return new WaitForSecondsRealtime(hitDuration);
+        foreach (GameKey key in gameKeys)
+        {
+            KeyUp(key);
+        }
+    }
 }

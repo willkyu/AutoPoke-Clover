@@ -110,7 +110,7 @@ public class Detector
         }
     }
 
-    public bool DetectBlack(byte[] image, int timeoutMillis = 1000)
+    public bool DetectBlack(byte[] image, float? blackThresholds = null, int timeoutMillis = 1000)
     {
         if (!TryGetAvailableDetector(timeoutMillis, out int detectorId))
         {
@@ -121,7 +121,7 @@ public class Detector
 
         try
         {
-            return detectCores[detectorId].ComputeBlackPercent(image) > blackThresholds;
+            return detectCores[detectorId].ComputeBlackPercent(image) > (blackThresholds == null ? this.blackThresholds : blackThresholds);
         }
         finally
         {
