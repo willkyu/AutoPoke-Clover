@@ -24,6 +24,8 @@ public class RingProgressBar : MonoBehaviour
         }
     }
 
+
+
     private void UpdateRing()
     {
         if (ring == null || ringHead == null || max == 0) return;

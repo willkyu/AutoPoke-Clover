@@ -190,7 +190,7 @@ public static class Win32Utils
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
-        Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
+        // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
         SendMessage(hwnd, WM_KEYDOWN, vk, 0);
         Thread.Sleep(100); // ⏱️ 添加 0.1 秒延迟
         SendMessage(hwnd, WM_KEYUP, vk, 0);
@@ -201,7 +201,7 @@ public static class Win32Utils
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
-        Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
+        // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
         SendMessage(hwnd, WM_KEYDOWN, vk, 0);
     }
 
@@ -210,7 +210,7 @@ public static class Win32Utils
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
-        Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
+        // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
         SendMessage(hwnd, WM_KEYUP, vk, 0);
     }
 

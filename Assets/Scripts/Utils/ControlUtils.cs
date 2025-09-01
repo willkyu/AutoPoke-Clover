@@ -6,46 +6,61 @@ using UnityEngine;
 
 public class ControlUtils
 {
-    IntPtr hWnd;
+    IntPtr hwnd;
     float speed;
     public ControlUtils(IntPtr hwnd, float spd = 1f)
     {
-        hWnd = hwnd;
+        this.hwnd = hwnd;
         speed = spd;
     }
     public void KeyDown(GameKey gameKey)
     {
-        Win32Utils.PressKey(hWnd, Settings.Keys.GetKey(gameKey));
+        // Debug.Log($"keydown {gameKey.ToString()}");
+        Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(gameKey));
     }
     public void KeyUp(GameKey gameKey)
     {
-        Win32Utils.ReleaseKey(hWnd, Settings.Keys.GetKey(gameKey));
+        Win32Utils.ReleaseKey(hwnd, Settings.Keys.GetKey(gameKey));
     }
-    public void KeyHit(GameKey gameKey, float hitDuration = 0.1f)
+    public void KeyHit(GameKey gameKey, int hitDuration = 100)
     {
-        CoroutineRunner.RunSafe(KeyHitCO(gameKey, hitDuration / speed));
-    }
-    private IEnumerator KeyHitCO(GameKey gameKey, float hitDuration)
-    {
+        // CoroutineRunner.RunSafe(KeyHitCO(gameKey, hitDuration / speed));
+        // KeyHitCO(gameKey, hitDuration / speed);
         KeyDown(gameKey);
-        yield return new WaitForSecondsRealtime(hitDuration);
+        Thread.Sleep((int)(hitDuration / speed));
         KeyUp(gameKey);
     }
+    // private IEnumerator KeyHitCO(GameKey gameKey, float hitDuration)
+    // {
+    //     KeyDown(gameKey);
+    //     yield return new WaitForSecondsRealtime(hitDuration);
+    //     KeyUp(gameKey);
+    // }
 
-    public void KeysHit(GameKey[] gameKeys, float hitDuration = 0.1f)
+    public void KeysHit(GameKey[] gameKeys, int hitDuration = 100)
     {
-        CoroutineRunner.RunSafe(KeysHitCO(gameKeys, hitDuration / speed));
-    }
-    private IEnumerator KeysHitCO(GameKey[] gameKeys, float hitDuration)
-    {
+        // CoroutineRunner.RunSafe(KeysHitCO(gameKeys, hitDuration / speed));
+        // KeysHitCO(gameKeys, hitDuration / speed);
         foreach (GameKey key in gameKeys)
         {
             KeyDown(key);
         }
-        yield return new WaitForSecondsRealtime(hitDuration);
+        Thread.Sleep((int)(hitDuration / speed));
         foreach (GameKey key in gameKeys)
         {
             KeyUp(key);
         }
     }
+    // private IEnumerator KeysHitCO(GameKey[] gameKeys, float hitDuration)
+    // {
+    //     foreach (GameKey key in gameKeys)
+    //     {
+    //         KeyDown(key);
+    //     }
+    //     yield return new WaitForSecondsRealtime(hitDuration);
+    //     foreach (GameKey key in gameKeys)
+    //     {
+    //         KeyUp(key);
+    //     }
+    // }
 }

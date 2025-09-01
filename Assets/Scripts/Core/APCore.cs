@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Unity.Sentis;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,19 +12,34 @@ using UnityEngine.UI;
 
 public class APCore : MonoBehaviour
 {
-    // Start is called before the first frame update
-    List<IntPtr> windows;
-    List<Task> tasks;
+    private static APCore instance;
+    private static readonly object locker = new object();
+    public static APCore I
+    {
+        get
+        {
+            if (instance == null)
+            {
+                lock (locker)
+                {
+
+                    instance = FindObjectOfType<APCore>();
+                    if (instance == null)
+                    {
+                        // 如果场景中没有，就新建一个 GameObject 并挂载
+                        var go = new GameObject("__APCore");
+                        instance = go.AddComponent<APCore>();
+                        DontDestroyOnLoad(go);
+                    }
+                }
+            }
+            return instance;
+        }
+    }
+
+    [Header("Model")]
     public ModelAsset modelAsset;
-
-    private Detector detector;
-
-    // [Header("Alpha")]
-    // public string alphaMode = "Wilds";
-    // public bool LR = true;
-    // public Text LR_btn_text;
-    // private AlphaFrLgStarters alphaFrLgStarters;
-    // private AlphaWilds alphaWilds;
+    [Header("Window")]
 
 
 
@@ -49,75 +66,109 @@ public class APCore : MonoBehaviour
     };
 
 
+    // —— 运行态
+    private Detector detector;
+    private readonly List<IntPtr> allWindows = new();
+    private readonly Dictionary<IntPtr, bool> windowBusy = new(); // true = 被占用
 
-    private void Awake()
+    private Dictionary<Guid, APTask> tasks = new();
+
+
+    void Awake()
     {
+        // if (instance != null) { Destroy(gameObject); return; }
+        // instance = this;
+        DontDestroyOnLoad(gameObject);
         Screen.SetResolution(400, 400, FullScreenMode.Windowed);
+        EventManager.I.AddListener(EventName.SetCounter, SetCounter);
     }
+
     void Start()
     {
-        detector = Detector.Init(initSize: 1, maxSize: 2, modelAsset: modelAsset, classThresholds: classThresholds);
-        GetWindows();
+        RefreshWindows();
+        detector = Detector.Init(initSize: 1, maxSize: Math.Max(2, allWindows.Count),
+                                 modelAsset: modelAsset, classThresholds: classThresholds);
+    }
+    private void OnDestroy()
+    {
+        EventManager.I.RemoveListener(EventName.SetCounter, SetCounter);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnApplicationQuit()
     {
-
+        Destroy(this);
+        detector?.Dispose();
     }
 
-    public void GetWindows()
+    // ======= Task管理 =======
+    public void AddTask(Guid guid, APTask apTask) { tasks[guid] = apTask; }
+    public void DelTask(Guid guid) { tasks.Remove(guid); }
+
+    public void SetCounter(object sender, EventArgs args)
     {
-        windows = Win32Utils.FindDesktopChildWindowsWithText(Settings.General.windowName);
-        if (windows.Count == 0)
+        var data = args as SetCounterEventArgs;
+        MainThreadDispatcher.Enqueue(() => tasks[data.guid].SetCounter(data.count));
+    }
+
+
+    // ======= 窗口管理 =======
+
+    public void RefreshWindows()
+    {
+        allWindows.Clear();
+        allWindows.AddRange(Win32Utils.FindDesktopChildWindowsWithText(Settings.General.windowName));
+        windowBusy.Clear();
+        foreach (var h in allWindows) windowBusy[h] = false;
+        Debug.Log($"[APCore] Found windows: {allWindows.Count}");
+    }
+
+    /// <summary>租借一个空闲窗口；失败返回 IntPtr.Zero</summary>
+    public bool RentWindow(IntPtr hwnd)
+    {
+        if (windowBusy.ContainsKey(hwnd) && !windowBusy[hwnd])
         {
-            Debug.LogWarning("❌ 未找到目标窗口");
-            return;
+            windowBusy[hwnd] = true;
+            return true;
         }
-        // hwnd = windows[0];
+        return false;
     }
 
-    //     public void AlphaRun()
-    //     {
-    //         switch (alphaMode)
-    //         {
-    //             case "FrLgStarters":
+    /// <summary>租借所有空闲窗口</summary>
+    public List<IntPtr> RentAllWindows()
+    {
+        List<IntPtr> res = new();
+        foreach (IntPtr hwnd in allWindows)
+        {
+            if (!windowBusy[hwnd]) { windowBusy[hwnd] = true; res.Add(hwnd); }
+        }
+        Debug.Log(res.Count);
+        return res;
+    }
 
-    //                 alphaFrLgStarters = new AlphaFrLgStarters(detector);
-    //                 foreach (IntPtr hwnd in windows)
-    //                 {
-    //                     alphaFrLgStarters.Run(hwnd);
-    //                 }
-    //                 break;
-    //             case "Wilds":
-    //                 alphaWilds = new AlphaWilds(detector, LR);
-    //                 foreach (IntPtr hwnd in windows)
-    //                 {
-    //                     alphaWilds.Run(hwnd);
-    //                 }
-    //                 break;
-    //         }
-    //     }
+    /// <summary>归还窗口；非法句柄会被忽略</summary>
+    public void ReturnWindow(IntPtr hwnd)
+    {
+        if (hwnd == IntPtr.Zero) return;
+        if (windowBusy.ContainsKey(hwnd)) windowBusy[hwnd] = false;
+    }
 
-    //     public void AlphaLR()
-    //     {
-    //         LR = !LR;
-    //         LR_btn_text.text = LR ? "左右走" : "上下走";
-    //     }
+    public IReadOnlyList<IntPtr> AllWindows => allWindows;
+    public bool IsBusy(IntPtr hwnd) => windowBusy.TryGetValue(hwnd, out var b) && b;
 
-    //     public void AlphaEnd()
-    //     {
-    //         alphaFrLgStarters?.End();
-    //         alphaWilds?.End();
+    // ======= Detector 服务 =======
 
-    //     }
+    public Detector GetDetector() => detector;
 
-    //     private void OnApplicationQuit()
-    //     {
-    //         alphaFrLgStarters?.End();
-    //         alphaWilds?.End();
-    // #if !UNITY_EDITOR
-    //         System.Diagnostics.Process.GetCurrentProcess().Kill();//当前杀死进程
-    // #endif
-    //     }
+    // /// <summary>在需要时更换阈值、模型等（可选）。</summary>
+    // public void ReinitDetector(Dictionary<DetectionClass, float> thresholds = null, ModelAsset model = null)
+    // {
+    //     detector?.Dispose();
+    //     if (thresholds != null) classThresholds = thresholds;
+    //     if (model != null) modelAsset = model;
+
+    //     detector = Detector.Init(initSize: 1,
+    //                              maxSize: Math.Max(2, allWindows.Count),
+    //                              modelAsset: modelAsset,
+    //                              classThresholds: classThresholds);
+    // }
 }

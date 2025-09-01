@@ -7,73 +7,84 @@ using UnityEngine;
 
 public interface TaskCore
 {
-    public bool Exe();
+    public void Exe();
 }
 
 public class GeneralCore : TaskCore
 {
-    private IntPtr hwnd;
-    private Detector detector;
-    private ControlUtils ctrl;
-    private List<DetectionClass> detectRes;
-    private float speed = 1f;
-    private float hitDuration = 0.1f;
-    private GameVersion gameVersion = GameVersion.RS;
-    private readonly System.Random rand = new System.Random();
+    protected IntPtr hwnd;
+    protected TaskParams config;
+    protected APTask owner;
+    protected Detector detector;
+    protected ControlUtils ctrl;
+    protected readonly System.Random rand = new System.Random();
+    protected List<DetectionClass> detectRes;
 
     // ------------------ Key Arrays ------------------
-    private GameKey[] SoftResetKeys = new GameKey[]
+    protected GameKey[] SoftResetKeys = new GameKey[]
     {
         GameKey.A, GameKey.B, GameKey.Start, GameKey.Select
     };
-    private GameKey[] UpDownKeys = new GameKey[]
+    protected GameKey[] UpDownKeys = new GameKey[]
     {
         GameKey.Up,GameKey.Down
     };
-    private GameKey[] LeftRightKeys = new GameKey[]
+    protected GameKey[] LeftRightKeys = new GameKey[]
     {
         GameKey.Left,GameKey.Right
     };
-    private GameKey[] RandomKeys = new GameKey[]
+    protected GameKey[] RandomKeys = new GameKey[]
     {
         GameKey.Left,GameKey.Right, GameKey.Up,GameKey.Down, GameKey.Start, GameKey.Select
     };
 
+    public GeneralCore(IntPtr hwnd, APTask owner, TaskParams config)
+    {
+        this.hwnd = hwnd;
+        this.owner = owner;
+        this.config = config;
+        detector = APCore.I.GetDetector();
+        ctrl = new ControlUtils(this.hwnd, config.speed);
+    }
+
+
     // ------------------ Functions ------------------
-    private void Wait(int waitTimeMS)
+    protected void Wait(int waitTimeMS)
     {
-        Thread.Sleep((int)(waitTimeMS / speed));
+        Thread.Sleep((int)(waitTimeMS / config.speed));
     }
-    private void Press(GameKey key, bool wait = true)
+    protected void Press(GameKey key, bool wait = true)
     {
-        ctrl.KeyHit(key, hitDuration);
-        Wait(wait ? 100 : 0);
+        // Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(key));
+
+        ctrl.KeyHit(key, config.hitDuration);
+        Wait(wait ? 200 : 0);
     }
-    private void ReleaseAllKeys()
+    protected void ReleaseAllKeys()
     {
         foreach (GameKey key in Enum.GetValues(typeof(GameKey)))
         {
             ctrl.KeyUp(key);
         }
     }
-    private bool Detect(DetectionClass targetClass, bool detectBlack = false)
+    protected bool Detect(DetectionClass targetClass, bool detectBlack = false)
     {
         detectRes = detector.Detect(Win32Utils.CaptureWindow(hwnd, out _, out _), detectBlack);
         return detectRes.Contains(targetClass);
     }
-    private bool DetectBlack(float? minRatio = null)
+    protected bool DetectBlack(float? minRatio = null)
     {
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
-    private void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); Wait(200); } }
-    private void WaitTillNotBlack() { while (DetectBlack()) Wait(200); }
-    private void SoftReset()
+    protected void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); Wait(200); } }
+    protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
+    protected void SoftReset()
     {
         ctrl.KeysHit(SoftResetKeys);
         Thread.Sleep(rand.Next(0, 300));
         while (!Detect(DetectionClass.BeforeEnter))
         {
-            if (gameVersion == GameVersion.FrLg)
+            if (config.gameVersion == GameVersion.FrLg)
             {
                 Press(RandomKeys[rand.Next(0, RandomKeys.Length)], wait: false);
                 Wait(rand.Next(0, 500));
@@ -88,7 +99,7 @@ public class GeneralCore : TaskCore
         Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
-        if (gameVersion == GameVersion.FrLg)
+        if (config.gameVersion == GameVersion.FrLg)
         {
             Press(GameKey.B);
             Wait(500);
@@ -97,7 +108,7 @@ public class GeneralCore : TaskCore
         }
     }
 
-    private void Run()
+    protected void Run()
     {
         Press(GameKey.Right);
         Press(GameKey.Down);
@@ -107,10 +118,24 @@ public class GeneralCore : TaskCore
         Wait(1200);
     }
 
-    private void ShinyHandle() { }
 
-    public bool Exe()
+    protected void ShinyHandle()
     {
-        throw new System.NotImplementedException();
+        // TODO
+    }
+
+    protected virtual void Encounter() { throw new System.NotImplementedException(); }
+    protected virtual bool ShinyDetect() { throw new System.NotImplementedException(); }
+    protected virtual void AfterDetect() { throw new System.NotImplementedException(); }
+
+    public void Exe()
+    {
+        while (true)
+        {
+            Encounter();
+            this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = owner.counter + 1 });
+            if (ShinyDetect()) { ShinyHandle(); break; }
+            AfterDetect();
+        }
     }
 }
