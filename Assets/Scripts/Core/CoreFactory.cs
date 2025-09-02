@@ -17,7 +17,7 @@ public class CoreFactory
             {
                 StationaryMode.FrLgStarters => new FrLgStartersCore(hwnd, owner, p),
                 StationaryMode.RSEStarters => new RSEStartersCore(hwnd, owner, p),
-                StationaryMode.FrLgMewtwo => new FrLgMewtwoCore(hwnd, owner, p),
+                StationaryMode.NormalHitA => new NormalHitACore(hwnd, owner, p),
                 _ => throw new ArgumentOutOfRangeException(
                         nameof(p.stationaryMode), p.stationaryMode, "Unsupported StationaryMode")
             },

@@ -99,6 +99,7 @@ public class AlphaBoolBtnPlugin : MonoBehaviour
             // Assert.IsTrue(btn.transition == Selectable.Transition.SpriteSwap, "[BoolBtnPlugin] Please set Button.transition as SpriteSwap");
             value = (bool)field.GetValue(target);
             btn.onClick.AddListener(OnClick);
+            ApplySprites();
         }
 
         EventManager.I.AddListener(EventName.SetRunning, DisableWhenRunning);
@@ -129,7 +130,7 @@ public class AlphaBoolBtnPlugin : MonoBehaviour
     {
         var val = args as SetRunningEventArgs;
         btn.interactable = !val.running;
-        Debug.Log($"Interactable switch to {val.running}");
+        // Debug.Log($"Interactable switch to {val.running}");
     }
 
 }

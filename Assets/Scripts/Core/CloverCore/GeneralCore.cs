@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ public class GeneralCore : TaskCore
     protected ControlUtils ctrl;
     protected readonly System.Random rand = new System.Random();
     protected List<DetectionClass> detectRes;
+    protected bool repelFlag = false;
 
     // ------------------ Key Arrays ------------------
     protected GameKey[] SoftResetKeys = new GameKey[]
@@ -60,6 +62,11 @@ public class GeneralCore : TaskCore
         ctrl.KeyHit(key, config.hitDuration);
         Wait(wait ? 200 : 0);
     }
+    protected void RandomPress(GameKey[] keys)
+    {
+        ctrl.KeyHit(keys[rand.Next(0, keys.Length)], config.hitDuration * 2);
+        // Wait(50);
+    }
     protected void ReleaseAllKeys()
     {
         foreach (GameKey key in Enum.GetValues(typeof(GameKey)))
@@ -69,14 +76,21 @@ public class GeneralCore : TaskCore
     }
     protected bool Detect(DetectionClass targetClass, bool detectBlack = false)
     {
+        var sw = Stopwatch.StartNew();
         detectRes = detector.Detect(Win32Utils.CaptureWindow(hwnd, out _, out _), detectBlack);
+        sw.Stop();
+        double elapsedMs = sw.Elapsed.TotalMilliseconds;
+
+        // 计算 FPS
+        double fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
+        this.TriggerEvent(EventName.SetFPS, new SetFPSEventArgs { fps = fps });
         return detectRes.Contains(targetClass);
     }
     protected bool DetectBlack(float? minRatio = null)
     {
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
-    protected void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); Wait(200); } }
+    protected void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); else Wait(200); } }
     protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
     protected void SoftReset()
     {
@@ -106,6 +120,19 @@ public class GeneralCore : TaskCore
             Press(GameKey.B);
             Wait(500);
         }
+    }
+
+    protected void UseRepel()
+    {
+        Press(GameKey.Start); Press(GameKey.A);
+        WaitTillBlack();
+        WaitTillNotBlack();
+        while (!Detect(DetectionClass.Dialogue)) Press(GameKey.A);
+        while (Detect(DetectionClass.Dialogue)) Press(GameKey.A);
+        while (!DetectBlack()) Press(GameKey.B);
+        WaitTillNotBlack();
+        Press(GameKey.B);
+        repelFlag = true;
     }
 
     protected void Run()

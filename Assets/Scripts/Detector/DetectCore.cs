@@ -84,7 +84,7 @@ public class DetectCore
     }
 
 
-    public float ComputeBlackPercent(byte[] rawData, float threshold = 10f)
+    public float ComputeBlackPercent(byte[] rawData, float threshold = 20f)
     {
         int blackCount = 0;
         int totalPixels = rawData.Length / 3;

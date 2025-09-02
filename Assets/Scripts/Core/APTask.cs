@@ -7,7 +7,7 @@ public enum Language { Jpn, Eng }
 public enum GameVersion { RS, E, FrLg }
 public enum TaskMode { Single, Multiple }
 public enum Function { Move, Stationary, Fish }
-public enum StationaryMode { FrLgStarters, RSEStarters, FrLgMewtwo }
+public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA }
 
 [Serializable]
 public struct TaskParams
@@ -27,12 +27,13 @@ public struct TaskParams
     public bool jump;
     public bool sweetScent;
     public bool repel;
+    public bool ifLR;
     // Extra
     public int extraData;
 
     public TaskParams(
         Language lang, GameVersion gv, TaskMode mode, Function fn,
-        float spd, int hd, int cnt, StationaryMode sMode, bool r, bool j, bool ss, bool re, int extra)
+        float spd, int hd, int cnt, StationaryMode sMode, bool r, bool j, bool ss, bool re, bool lr, int extra)
     {
         language = lang;
         gameVersion = gv;
@@ -46,6 +47,7 @@ public struct TaskParams
         jump = j;
         sweetScent = ss;
         repel = re;
+        ifLR = lr;
         extraData = extra;
     }
 }
@@ -70,6 +72,7 @@ public class APTask : MonoBehaviour
     public bool jump = false;
     public bool sweetScent = false;
     public bool repel = false;
+    public bool lr = true;
     // Extra
     public int extraData;
 
@@ -93,7 +96,7 @@ public class APTask : MonoBehaviour
 
     // ===== 参数快照 =====
     private TaskParams CurrentParams() =>
-        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, counter, stationaryMode, run, jump, sweetScent, repel, extraData);
+        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, counter, stationaryMode, run, jump, sweetScent, repel, lr, extraData);
 
 
 
@@ -150,7 +153,7 @@ public class APTask : MonoBehaviour
                     core.Exe();
                 }
                 catch (ThreadInterruptedException) { /* StopTask 时可能触发，忽略 */ }
-                catch (System.Exception e) { Debug.LogException(e); }
+                // catch (System.Exception e) { Debug.LogException(e); }
                 finally
                 {
                     if (Interlocked.Decrement(ref aliveCount) == 0)

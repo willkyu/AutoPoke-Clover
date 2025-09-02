@@ -56,11 +56,11 @@ public class APCore : MonoBehaviour
     { DetectionClass.FrLg_ns, 0.5f },
     { DetectionClass.BeforeEnter, 0.8f },
     { DetectionClass.BiteEng, 0.5f },
-    { DetectionClass.FishGoneEng, 0.5f },
-    { DetectionClass.GetFishEng, 0.45f },
-    { DetectionClass.NoFishEng, 0.5f },
+    { DetectionClass.FishGoneEng, 0.7f },
+    { DetectionClass.GetFishEng, 0.5f },
+    { DetectionClass.NoFishEng, 0.7f },
     { DetectionClass.BiteJpn, 0.5f },
-    { DetectionClass.FishGoneJpn, 0.5f },
+    { DetectionClass.FishGoneJpn, 0.6f },
     { DetectionClass.GetFishJpn, 0.6f },
     { DetectionClass.NoFishJpn, 0.5f },
     };
@@ -79,7 +79,7 @@ public class APCore : MonoBehaviour
         // if (instance != null) { Destroy(gameObject); return; }
         // instance = this;
         DontDestroyOnLoad(gameObject);
-        Screen.SetResolution(400, 400, FullScreenMode.Windowed);
+        Screen.SetResolution(600, 450, FullScreenMode.Windowed);
         EventManager.I.AddListener(EventName.SetCounter, SetCounter);
     }
 
@@ -141,7 +141,7 @@ public class APCore : MonoBehaviour
         {
             if (!windowBusy[hwnd]) { windowBusy[hwnd] = true; res.Add(hwnd); }
         }
-        Debug.Log(res.Count);
+        // Debug.Log(res.Count);
         return res;
     }
 

@@ -22,3 +22,9 @@ public class SetRunningEventArgs : EventArgs
     // public Guid guid;
     public bool running;
 }
+
+public class SetFPSEventArgs : EventArgs
+{
+    // public Guid guid;
+    public double fps;
+}

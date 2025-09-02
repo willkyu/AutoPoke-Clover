@@ -15,8 +15,11 @@ public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
 
     [Header("Dict: StationaryMode -> Options")]
     public Dictionary<StationaryMode, List<string>> extraDict =
-        new Dictionary<StationaryMode, List<string>> {
-            { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
+        new Dictionary<StationaryMode, List<string>>
+        {
+            // { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
+            { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } }
+
         };
 
     private TMP_Dropdown dropdown;

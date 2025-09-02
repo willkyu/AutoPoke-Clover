@@ -1,5 +1,6 @@
 using System;
 using Unity.VisualScripting;
+using UnityEngine;
 
 public class FrLgStartersCore : GeneralCore
 {
@@ -7,6 +8,7 @@ public class FrLgStartersCore : GeneralCore
 
     protected override void Encounter()
     {
+        Debug.Log($"encounter hit duration: {config.hitDuration}");
         Press(GameKey.A);
         for (int i = 0; i < 15; i++) { Press(GameKey.A); Wait(200); }
         while (Detect(DetectionClass.Dialogue)) { Press(GameKey.B); Wait(200); }
@@ -37,13 +39,12 @@ public class RSEStartersCore : GeneralCore
     public RSEStartersCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
     protected override void Encounter()
     {
-        Press(GameKey.Start); Press(GameKey.A);
+        Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
         if (config.extraData == 0) Press(GameKey.Left);
         else if (config.extraData == 2) Press(GameKey.Right);
-        Press(GameKey.A); Press(GameKey.A);
-        WaitTillBlack();
+        WaitTillBlack(PressA: true);
         WaitTillNotBlack();
     }
 
@@ -61,22 +62,25 @@ public class RSEStartersCore : GeneralCore
     }
 }
 
-public class FrLgMewtwoCore : GeneralCore
+public class NormalHitACore : GeneralCore
 {
-    public FrLgMewtwoCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
+    public NormalHitACore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
     protected override void Encounter()
     {
-        base.Encounter();
+        WaitTillBlack(PressA: true);
+        WaitTillNotBlack();
     }
 
     protected override bool ShinyDetect()
     {
-        return base.ShinyDetect();
+        while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
+        return false;
+
     }
 
     protected override void AfterDetect()
     {
-        base.AfterDetect();
+        SoftReset();
     }
 }
 
