@@ -101,17 +101,22 @@ public class GeneralCore : TaskCore
             if (config.gameVersion == GameVersion.FrLg)
             {
                 Press(RandomKeys[rand.Next(0, RandomKeys.Length)], wait: false);
+                if (Detect(DetectionClass.BeforeEnter)) break; // Better robustness
                 Wait(rand.Next(0, 500));
+                if (Detect(DetectionClass.BeforeEnter)) break;
                 Press(GameKey.A);
+                if (Detect(DetectionClass.BeforeEnter)) break;
             }
             else
             {
                 Press(GameKey.A);
+                if (Detect(DetectionClass.BeforeEnter)) break;
                 Wait(200);
+                if (Detect(DetectionClass.BeforeEnter)) break;
             }
         }
-        Press(GameKey.A);
-        WaitTillBlack();
+        // Press(GameKey.A);
+        WaitTillBlack(PressA: true);
         WaitTillNotBlack();
         if (config.gameVersion == GameVersion.FrLg)
         {
