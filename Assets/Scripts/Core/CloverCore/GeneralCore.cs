@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -169,5 +170,13 @@ public class GeneralCore : TaskCore
             if (ShinyDetect()) { ShinyHandle(); break; }
             AfterDetect();
         }
+        APCore.I.ReturnWindow(this.hwnd);
     }
+
+    public void End()
+    {
+        ReleaseAllKeys();
+    }
+
+
 }

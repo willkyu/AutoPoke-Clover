@@ -184,14 +184,20 @@ public class APTask : MonoBehaviour
     {
         if (!running) return;
 
+
         // 请求退出并等待
         foreach (var th in threads)
         {
             if (th == null) continue;
-            if (!th.Join(1000))
+            if (!th.Join(0))
             {
                 try { th.Interrupt(); } catch { }
             }
+        }
+
+        foreach (GeneralCore core in cores)
+        {
+            core.End();
         }
         threads.Clear();
         cores.Clear();

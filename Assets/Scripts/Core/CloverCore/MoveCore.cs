@@ -21,7 +21,7 @@ public class MoveCore : GeneralCore
                 if (!repelFlag && config.repel) UseRepel();
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        else while (!DetectBlack()) Wait(200);
+        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B); Wait(200); }
         ReleaseAllKeys();
         WaitTillNotBlack();
     }
