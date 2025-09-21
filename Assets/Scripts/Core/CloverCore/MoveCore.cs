@@ -13,15 +13,17 @@ public class MoveCore : GeneralCore
     private void NormalEncounter()
     {
         Debug.Log("start");
+        ReleaseAllKeys();
         if (config.repel) UseRepel();
-        if (config.jump || config.run) ctrl.KeyDown(GameKey.B);
         if (!config.jump) while (!DetectBlack())
             {
                 while (Detect(DetectionClass.Dialogue)) { Press(GameKey.B); Wait(300); repelFlag = false; }
                 if (!repelFlag && config.repel) UseRepel();
+                if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
         else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B); Wait(200); }
+        if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
         ReleaseAllKeys();
         WaitTillNotBlack();
     }
@@ -39,7 +41,8 @@ public class MoveCore : GeneralCore
     {
         while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
         Press(GameKey.A);
-        while (!Detect(DetectionClass.CanRun)) Wait(200);
+        Press(GameKey.A);
+        while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
         return false;
     }
 

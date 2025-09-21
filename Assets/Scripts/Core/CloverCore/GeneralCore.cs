@@ -130,15 +130,28 @@ public class GeneralCore : TaskCore
 
     protected void UseRepel()
     {
+        UnityEngine.Debug.Log("use repel start");
         Press(GameKey.Start); Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
-        while (!Detect(DetectionClass.Dialogue)) Press(GameKey.A);
-        while (Detect(DetectionClass.Dialogue)) Press(GameKey.A);
+        if (config.language == Language.Jpn)
+        {
+            // TODO collect and retrain
+            Press(GameKey.A);
+            Press(GameKey.A);
+        }
+        else
+        {
+            UnityEngine.Debug.Log(config.language);
+            while (!Detect(DetectionClass.Dialogue)) Press(GameKey.A);
+            while (Detect(DetectionClass.Dialogue)) Press(GameKey.A);
+        }
         while (!DetectBlack()) Press(GameKey.B);
         WaitTillNotBlack();
         Press(GameKey.B);
         repelFlag = true;
+        UnityEngine.Debug.Log("use repel end");
+
     }
 
     protected void Run()

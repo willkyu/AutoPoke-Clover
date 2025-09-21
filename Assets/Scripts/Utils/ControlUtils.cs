@@ -13,13 +13,14 @@ public class ControlUtils
         this.hwnd = hwnd;
         speed = spd;
     }
-    public void KeyDown(GameKey gameKey)
+    public void KeyDown(GameKey gameKey, int lParam = 0)
     {
         // Debug.Log($"keydown {gameKey.ToString()}");
-        Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(gameKey));
+        Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(gameKey), lParam);
     }
     public void KeyUp(GameKey gameKey)
     {
+        // Debug.Log($"keyup {gameKey.ToString()}");
         Win32Utils.ReleaseKey(hwnd, Settings.Keys.GetKey(gameKey));
     }
     public void KeyHit(GameKey gameKey, int hitDuration = 100)

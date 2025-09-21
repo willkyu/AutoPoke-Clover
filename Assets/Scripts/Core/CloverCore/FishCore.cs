@@ -48,7 +48,7 @@ public class FishCore : GeneralCore
     {
         while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
         Press(GameKey.A);
-        while (!Detect(DetectionClass.CanRun)) Wait(200);
+        while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
         return false;
     }
 

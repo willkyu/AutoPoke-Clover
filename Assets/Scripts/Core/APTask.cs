@@ -55,7 +55,7 @@ public struct TaskParams
 public class APTask : MonoBehaviour
 {
     public readonly Guid TaskId = Guid.NewGuid();
-    public RingProgressBar rpb;
+    // public RingProgressBar rpb;
     [Header("UI-绑定参数（可由 UI 修改）")]
     public Language language = Language.Eng;
     public GameVersion gameVersion = GameVersion.RS;
@@ -105,7 +105,8 @@ public class APTask : MonoBehaviour
     public void SetCounter(int value)
     {
         counter = value;
-        rpb.value = value;
+        Debug.Log($"update count: {value}");
+        // rpb.value = value;
         // OnParamsChanged?.Invoke(CurrentParams());
     }
     public void SetHwnd(List<IntPtr> hwnds) { wins = hwnds; }

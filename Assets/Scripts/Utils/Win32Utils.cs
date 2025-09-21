@@ -185,33 +185,33 @@ public static class Win32Utils
     //     PostMessage(hwnd, WM_KEYDOWN, (int)key, 0);
     //     PostMessage(hwnd, WM_KEYUP, (int)key, 0);
     // }
-    public static void SendKey(IntPtr hwnd, KeyCode key)
+    public static void SendKey(IntPtr hwnd, KeyCode key, int lParam = 0)
     {
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
         // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
-        SendMessage(hwnd, WM_KEYDOWN, vk, 0);
+        SendMessage(hwnd, WM_KEYDOWN, vk, lParam);
         Thread.Sleep(100); // ⏱️ 添加 0.1 秒延迟
-        SendMessage(hwnd, WM_KEYUP, vk, 0);
+        SendMessage(hwnd, WM_KEYUP, vk, lParam);
     }
 
-    public static void PressKey(IntPtr hwnd, KeyCode key)
+    public static void PressKey(IntPtr hwnd, KeyCode key, int lParam = 0)
     {
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
         // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
-        SendMessage(hwnd, WM_KEYDOWN, vk, 0);
+        SendMessage(hwnd, WM_KEYDOWN, vk, lParam);
     }
 
-    public static void ReleaseKey(IntPtr hwnd, KeyCode key)
+    public static void ReleaseKey(IntPtr hwnd, KeyCode key, int lParam = 0)
     {
         int vk = KeyCodeToVirtualKey(key);
         if (vk == 0) return;
 
         // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
-        SendMessage(hwnd, WM_KEYUP, vk, 0);
+        SendMessage(hwnd, WM_KEYUP, vk, lParam);
     }
 
 
