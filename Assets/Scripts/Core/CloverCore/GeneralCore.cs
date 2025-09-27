@@ -168,6 +168,7 @@ public class GeneralCore : TaskCore
     protected void ShinyHandle()
     {
         // TODO
+        Win32Utils.SaveWindowScreenshot(hwnd);
     }
 
     protected virtual void Encounter() { throw new System.NotImplementedException(); }

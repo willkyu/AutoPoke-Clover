@@ -22,7 +22,7 @@ public class MoveCore : GeneralCore
                 if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B); Wait(200); }
+        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
         if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
         ReleaseAllKeys();
         WaitTillNotBlack();
@@ -33,6 +33,7 @@ public class MoveCore : GeneralCore
         WaitTillBlack();
         WaitTillNotBlack();
         Press(GameKey.Up); Press(GameKey.Up);
+        if (config.ifLR) { Press(GameKey.A); Press(GameKey.Down); }
         WaitTillBlack(PressA: true);
         WaitTillNotBlack();
     }

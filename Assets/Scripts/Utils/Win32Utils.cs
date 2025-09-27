@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -136,6 +137,34 @@ public static class Win32Utils
         return rawData;
     }
 
+    public static byte[] CaptureWindowOrg(IntPtr hwnd, out int width, out int height)
+    {
+        // 1) 取窗口在真实 DPI 下的原始尺寸
+        RECT rc = GetRealRect(hwnd);
+        width = rc.Right - rc.Left;
+        height = rc.Bottom - rc.Top;
+
+        // 2) DC 和位图
+        IntPtr hWndDC = GetWindowDC(hwnd);
+        IntPtr hMemDC = CreateCompatibleDC(hWndDC);
+        IntPtr hBitmap = CreateCompatibleBitmap(hWndDC, width, height);
+        IntPtr hOld = SelectObject(hMemDC, hBitmap);
+
+        // 3) 不做任何缩放，按原尺寸拷贝
+        BitBlt(hMemDC, 0, 0, width, height, hWndDC, 0, 0, SRCCOPY);
+
+        // 4) 清理 DC
+        SelectObject(hMemDC, hOld);
+        DeleteDC(hMemDC);
+        ReleaseDC(hwnd, hWndDC);
+
+        // 5) 导出为 RGB24（与你现有的 GetBitmapBytes 相同）
+        byte[] rawData = GetBitmapBytes(hBitmap, width, height);
+        DeleteObject(hBitmap);
+        return rawData;
+    }
+
+
 
     private static byte[] GetBitmapBytes(IntPtr hBitmap, int width, int height)
     {
@@ -212,6 +241,98 @@ public static class Win32Utils
 
         // Debug.Log($"⌨️ 向窗口 {hwnd} 发送按键: {key} (VK: {vk})");
         SendMessage(hwnd, WM_KEYUP, vk, lParam);
+    }
+
+
+
+    /// <summary>
+    /// 截图并保存为 PNG。默认保存到“程序所在文件夹”，文件名包含时间戳。
+    /// 返回完整保存路径。
+    /// </summary>
+    public static string SaveWindowScreenshot(IntPtr hwnd, string folder = null, string filename = null)
+    {
+        // 1) 目标保存文件夹
+        string baseFolder = folder ?? GetProgramFolder();
+        if (!Directory.Exists(baseFolder))
+            Directory.CreateDirectory(baseFolder);
+
+        // 2) 文件名（改成 .bmp）
+        string ts = System.DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
+        string name = string.IsNullOrEmpty(filename) ? $"screenshot_{ts}.bmp" :
+                    (filename.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ? filename : filename + ".bmp");
+        string fullpath = Path.Combine(baseFolder, name);
+
+        // 3) 调用 CaptureWindow 拿到 RGB24 原始字节
+        int w, h;
+        byte[] rgb24 = CaptureWindowOrg(hwnd, out w, out h);
+
+        // 4) BMP 文件参数
+        int bytesPerPixel = 3;
+        int stride = ((w * bytesPerPixel + 3) / 4) * 4;
+        int imageSize = stride * h;
+        int fileHeaderSize = 14;
+        int infoHeaderSize = 40;
+        int fileSize = fileHeaderSize + infoHeaderSize + imageSize;
+
+        using (var fs = new FileStream(fullpath, FileMode.Create, FileAccess.Write))
+        using (var bw = new BinaryWriter(fs))
+        {
+            // === BITMAPFILEHEADER ===
+            bw.Write((ushort)0x4D42);       // bfType = "BM"
+            bw.Write(fileSize);             // bfSize
+            bw.Write((ushort)0);            // bfReserved1
+            bw.Write((ushort)0);            // bfReserved2
+            bw.Write(fileHeaderSize + infoHeaderSize); // bfOffBits
+
+            // === BITMAPINFOHEADER ===
+            bw.Write(infoHeaderSize);       // biSize
+            bw.Write(w);                    // biWidth
+            bw.Write(h);                    // biHeight (正数 = 自下而上存储，方向正确)
+            bw.Write((ushort)1);            // biPlanes
+            bw.Write((ushort)(bytesPerPixel * 8)); // biBitCount = 24
+            bw.Write(0);                    // biCompression = BI_RGB
+            bw.Write(imageSize);            // biSizeImage
+            bw.Write(0);                    // biXPelsPerMeter
+            bw.Write(0);                    // biYPelsPerMeter
+            bw.Write(0);                    // biClrUsed
+            bw.Write(0);                    // biClrImportant
+
+            // === 写像素数据 (RGB24 → BMP的BGR顺序 + stride填充) ===
+            byte[] padding = new byte[stride - w * bytesPerPixel];
+            for (int y = h - 1; y >= 0; y--)  // 从最后一行开始写，实现正确方向
+            {
+                int rowStart = y * w * bytesPerPixel;
+                for (int x = 0; x < w; x++)
+                {
+                    int i = rowStart + x * bytesPerPixel;
+                    bw.Write(rgb24[i + 2]); // R
+                    bw.Write(rgb24[i + 1]); // G
+                    bw.Write(rgb24[i]);     // B
+                }
+                if (padding.Length > 0)
+                    bw.Write(padding);
+            }
+        }
+
+        Debug.Log($"📸 截图已保存: {fullpath}");
+        return fullpath;
+    }
+
+
+    /// <summary>
+    /// 获取“程序所在文件夹”
+    /// - Player: 可执行文件所在目录
+    /// - Editor: 项目根目录
+    /// </summary>
+    private static string GetProgramFolder()
+    {
+#if UNITY_EDITOR
+        // 在 Editor 下，Assets 的上一级就是项目根目录
+        return Directory.GetParent(Application.dataPath)!.FullName;
+#else
+            // Player 下 dataPath 是 xxx_Data，取它的上一级就是 exe 所在目录
+            return Path.GetDirectoryName(Application.dataPath);
+#endif
     }
 
 
