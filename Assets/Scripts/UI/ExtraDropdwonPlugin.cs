@@ -18,7 +18,9 @@ public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
         new Dictionary<StationaryMode, List<string>>
         {
             // { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
-            { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } }
+            { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } },
+            { StationaryMode.NormalHitA, new List<string> { "不执行方向操作", "左", "右", "上", "下" } }
+
 
         };
 

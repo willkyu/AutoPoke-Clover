@@ -67,6 +67,14 @@ public class NormalHitACore : GeneralCore
     public NormalHitACore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
     protected override void Encounter()
     {
+        switch (config.extraData)
+        {
+            case 0: break;
+            case 1: Press(GameKey.Left); break;
+            case 2: Press(GameKey.Right); break;
+            case 3: Press(GameKey.Up); break;
+            case 4: Press(GameKey.Down); break;
+        }
         WaitTillBlack(PressA: true);
         WaitTillNotBlack();
     }

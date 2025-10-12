@@ -124,7 +124,7 @@ public class GeneralCore : TaskCore
             Press(GameKey.B);
             Wait(500);
             Press(GameKey.B);
-            Wait(500);
+            Wait(2000);
         }
     }
 

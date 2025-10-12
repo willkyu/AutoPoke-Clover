@@ -257,8 +257,8 @@ public static class Win32Utils
             Directory.CreateDirectory(baseFolder);
 
         // 2) 文件名（改成 .bmp）
-        string ts = System.DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
-        string name = string.IsNullOrEmpty(filename) ? $"screenshot_{ts}.bmp" :
+        string ts = System.DateTime.Now.ToString("yyyyMMdd(HHmmss)");
+        string name = string.IsNullOrEmpty(filename) ? $"{ts}.AutoPoke.bmp" :
                     (filename.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ? filename : filename + ".bmp");
         string fullpath = Path.Combine(baseFolder, name);
 
