@@ -9,7 +9,6 @@ public class MainThreadDispatcher : MonoBehaviour
     private static int mainThreadId;
     private static MainThreadDispatcher instance;
 
-    // 确保组件存在并记录主线程ID
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
@@ -29,7 +28,7 @@ public class MainThreadDispatcher : MonoBehaviour
         actionQueue.Enqueue(action);
     }
 
-    void Update()
+    private void Update()
     {
         while (actionQueue.TryDequeue(out var action))
         {
@@ -38,13 +37,10 @@ public class MainThreadDispatcher : MonoBehaviour
         }
     }
 
-    // 如果在主线程，直接执行；否则投递到主线程并同步等待
     public static T InvokeSync<T>(Func<T> func)
     {
         if (func == null) return default;
-
-        if (IsMainThread)
-            return func(); // ✅ 主线程直接执行，避免死锁
+        if (IsMainThread) return func();
 
         T result = default;
         Exception ex = null;
@@ -56,18 +52,15 @@ public class MainThreadDispatcher : MonoBehaviour
                 catch (Exception e) { ex = e; }
                 finally { done.Set(); }
             });
-            done.Wait(); // 阻塞的是调用方线程，不是主线程
+            done.Wait();
         }
-
         if (ex != null) throw ex;
         return result;
     }
 
-    // 方便无返回值场景
     public static void InvokeSync(Action action)
     {
         if (action == null) return;
-
         if (IsMainThread) { action(); return; }
 
         Exception ex = null;
