@@ -18,14 +18,7 @@ public class FrLgStartersCore : GeneralCore
 
     protected override bool ShinyDetect()
     {
-        Press(GameKey.Start); Press(GameKey.A);
-        WaitTillBlack();
-        WaitTillNotBlack();
-        Press(GameKey.A); Wait(200); Press(GameKey.A);
-        WaitTillBlack();
-        WaitTillNotBlack();
-        Wait(500);
-        return Detect(DetectionClass.FrLg_s);
+        return ShinyDetectInBag();
     }
 
     protected override void AfterDetect()
@@ -50,10 +43,7 @@ public class RSEStartersCore : GeneralCore
 
     protected override bool ShinyDetect()
     {
-        while (!Detect(DetectionClass.Next)) Wait(200);
-        Press(GameKey.A);
-        while (!Detect(DetectionClass.CanRun)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
-        return false;
+        return ShinyDetectInBattle(checkEnemy: false);
     }
 
     protected override void AfterDetect()
@@ -81,9 +71,7 @@ public class NormalHitACore : GeneralCore
 
     protected override bool ShinyDetect()
     {
-        while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
-        return false;
-
+        return ShinyDetectInBattle(checkEnemy: true, SL: true);
     }
 
     protected override void AfterDetect()

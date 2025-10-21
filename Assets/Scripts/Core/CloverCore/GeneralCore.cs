@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -164,6 +165,49 @@ public class GeneralCore : TaskCore
         Wait(1200);
     }
 
+    protected bool ShinyDetectInBattle(bool checkEnemy = true, bool SL = false)
+    {
+        if (checkEnemy)
+        {
+            while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
+            if (!SL)
+            {
+                Press(GameKey.A);
+                Press(GameKey.A);
+                while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
+            }
+            return false;
+        }
+        else
+        {
+            while (!Detect(DetectionClass.Next)) Wait(200);
+            Press(GameKey.A);
+            while (!Detect(DetectionClass.CanRun)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
+            return false;
+        }
+    }
+
+    protected bool ShinyDetectInBag()
+    {
+        if (config.gameVersion == GameVersion.FrLg)
+        {
+            Press(GameKey.Start); Press(GameKey.A);
+            WaitTillBlack();
+            WaitTillNotBlack();
+            Press(GameKey.A); Wait(200); Press(GameKey.A);
+            WaitTillBlack();
+            WaitTillNotBlack();
+            Wait(500);
+            return Detect(DetectionClass.FrLg_s);
+        }
+        else if (config.gameVersion == GameVersion.RS || config.gameVersion == GameVersion.E)
+        {
+            //todo
+            throw new System.NotImplementedException();
+        }
+        throw new System.NotImplementedException();
+    }
+
 
     protected void ShinyHandle()
     {
@@ -177,6 +221,7 @@ public class GeneralCore : TaskCore
 
     public void Exe()
     {
+        if (config.function == Function.Move && config.repel) UseRepel();
         while (true)
         {
             Encounter();
@@ -189,6 +234,7 @@ public class GeneralCore : TaskCore
 
     public void End()
     {
+        repelFlag = false;
         ReleaseAllKeys();
     }
 

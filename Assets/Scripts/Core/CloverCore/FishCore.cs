@@ -46,10 +46,7 @@ public class FishCore : GeneralCore
 
     protected override bool ShinyDetect()
     {
-        while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
-        Press(GameKey.A);
-        while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
-        return false;
+        return ShinyDetectInBattle(checkEnemy: true, SL: false);
     }
 
     protected override void AfterDetect()

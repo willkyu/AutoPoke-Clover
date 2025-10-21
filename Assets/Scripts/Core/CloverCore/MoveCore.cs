@@ -14,10 +14,14 @@ public class MoveCore : GeneralCore
     {
         Debug.Log("start");
         ReleaseAllKeys();
-        if (config.repel) UseRepel();
+        // if (config.repel) UseRepel();
         if (!config.jump) while (!DetectBlack())
             {
-                while (Detect(DetectionClass.Dialogue)) { Press(GameKey.B); Wait(300); repelFlag = false; }
+                while (Detect(DetectionClass.Dialogue))
+                {
+                    Wait(300); if (!Detect(DetectionClass.Dialogue)) break;
+                    Press(GameKey.B); Wait(300); repelFlag = false;
+                }
                 if (!repelFlag && config.repel) UseRepel();
                 if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
@@ -33,18 +37,14 @@ public class MoveCore : GeneralCore
         WaitTillBlack();
         WaitTillNotBlack();
         Press(GameKey.Up); Press(GameKey.Up);
-        if (config.ifLR) { Press(GameKey.A); Press(GameKey.Down); }
+        if (config.gameVersion == GameVersion.FrLg) { Press(GameKey.A); Press(GameKey.Down); }
         WaitTillBlack(PressA: true);
         WaitTillNotBlack();
     }
 
     protected override bool ShinyDetect()
     {
-        while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
-        Press(GameKey.A);
-        Press(GameKey.A);
-        while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
-        return false;
+        return ShinyDetectInBattle(checkEnemy: true, SL: false);
     }
 
     protected override void AfterDetect()

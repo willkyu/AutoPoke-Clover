@@ -14,10 +14,12 @@ public class APCore : MonoBehaviour
 {
     private static APCore instance;
     private static readonly object locker = new object();
+    private static bool applicationIsQuitting = false;
     public static APCore I
     {
         get
         {
+            if (applicationIsQuitting) return instance;
             if (instance == null)
             {
                 lock (locker)
@@ -92,6 +94,7 @@ public class APCore : MonoBehaviour
     private void OnDestroy()
     {
         EventManager.I.RemoveListener(EventName.SetCounter, SetCounter);
+        applicationIsQuitting = true;
     }
 
     void OnApplicationQuit()
