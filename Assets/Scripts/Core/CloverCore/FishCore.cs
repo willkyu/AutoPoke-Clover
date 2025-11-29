@@ -24,23 +24,36 @@ public class FishCore : GeneralCore
 
     private void RSEEncounter()
     {
-        throw new System.NotImplementedException();
-        bool getFlag = false;
         while (true)
         {
-            getFlag = true;
             Press(GameKey.Select);
-            while (!Detect(config.language == Language.Eng ? DetectionClass.GetFishEng : DetectionClass.GetFishJpn))
+            while (true)
             {
-                if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.FishGoneEng : DetectionClass.FishGoneJpn)) { Debug.Log("fishgone"); getFlag = false; break; }
-                if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.NoFishEng : DetectionClass.NoFishJpn)) { Debug.Log("nofish"); getFlag = false; break; }
-                if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.BiteEng : DetectionClass.BiteJpn)) { Debug.Log("bite"); Press(GameKey.A); }
+                if (Detect(DetectionClass.BlankDialogue)) { Wait(200); continue; }
+                if (detectRes.Contains(DetectionClass.Dialogue)) { Press(GameKey.A); continue; }
+                if (DetectBlack()) { WaitTillNotBlack(); return; }
+                Press(GameKey.Select);
             }
-            Press(GameKey.A);
-            if (getFlag) break;
         }
-        WaitTillBlack();
-        WaitTillNotBlack();
+
+
+        // throw new System.NotImplementedException();
+        // bool getFlag = false;
+        // while (true)
+        // {
+        //     getFlag = true;
+        //     Press(GameKey.Select);
+        //     while (!Detect(config.language == Language.Eng ? DetectionClass.GetFishEng : DetectionClass.GetFishJpn))
+        //     {
+        //         if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.FishGoneEng : DetectionClass.FishGoneJpn)) { Debug.Log("fishgone"); getFlag = false; break; }
+        //         if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.NoFishEng : DetectionClass.NoFishJpn)) { Debug.Log("nofish"); getFlag = false; break; }
+        //         if (detectRes.Contains(config.language == Language.Eng ? DetectionClass.BiteEng : DetectionClass.BiteJpn)) { Debug.Log("bite"); Press(GameKey.A); }
+        //     }
+        //     Press(GameKey.A);
+        //     if (getFlag) break;
+        // }
+        // WaitTillBlack();
+        // WaitTillNotBlack();
 
     }
 

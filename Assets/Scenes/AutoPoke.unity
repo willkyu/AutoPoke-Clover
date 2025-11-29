@@ -388,7 +388,7 @@ GameObject:
   - component: {fileID: 179088050}
   - component: {fileID: 179088049}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Notification
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -433,9 +433,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8FD9\u662FAutoPoke: Clover\u7684Alpha\u6D4B\u8BD5\u7248\u672C\u3002\n\u7248\u672C\u53F7v0.0.4_alpha\n(102125)\n\n\u6682\u65F6\u672A\u52A0\u5165\u4EE5\u4E0B\u529F\u80FD\uFF1A\n-
+  m_text: "\u8FD9\u662FAutoPoke: Clover\u7684Alpha\u6D4B\u8BD5\u7248\u672C\u3002\n\u7248\u672C\u53F7v0.0.5_alpha\n(112925)\n\n\u6682\u65F6\u672A\u52A0\u5165\u4EE5\u4E0B\u529F\u80FD\uFF1A\n-
     \u66F4\u6539\u952E\u4F4D\n- \u65E5\u5FD7\u8BB0\u5F55\n- \u95EA\u5149\u901A\u77E5\n-
-    \u5B9D\u77F3\u9493\u9C7C\n- \u65E0\u7535\u5B9A\u70B9\u652F\u6301\n- \u81EA\u5B9A\u4E49\u8D77\u59CB\u5E27\u6570\n-
+    \u65E0\u7535\u5B9A\u70B9\u652F\u6301\n- \u81EA\u5B9A\u4E49\u8D77\u59CB\u5E27\u6570\n-
     \u81EA\u5B9A\u4E49\u500D\u901F\n- \u81EA\u5B9A\u4E49\u7A97\u53E3\u540D\u79F0\n 
     \uFF08\u6A21\u62DF\u5668\u7528\uFF09\n- \u66F4\u591A\u7684\u5237\u95EA\u529F\u80FD\n-
     \u597D\u770B\u7684UI\n\n\u5982\u679C\u9047\u5230bug\u8BF7\u53CD\u9988\uFF0C\u611F\u8C22\u6D4B\u8BD5:D\n\n\xA9willkyu"
@@ -937,7 +937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   display: {fileID: 210221256}
   resultText: {fileID: 2110181915}
-  modelAsset: {fileID: 5022602860645237092, guid: 2ed175ba9c7bbcf449140e2568ed2684, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: d5fbc3f503fcc7d4280c587570f15d7b, type: 3}
 --- !u!4 &621730605
 Transform:
   m_ObjectHideFlags: 0
@@ -1854,7 +1854,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5B9D\u77F3\u9493\u9C7C\u656C\u8BF7\u671F\u5F85\uFF0C\u8BF7\u5148\u4F7F\u7528\u706B\u53F6\u9493\u9C7C\u3002"
+  m_text: "\u5DF2\u652F\u6301\u5B9D\u77F3\u9493\u9C7C^^\n\u4ECA\u540E\u4E5F\u8BF7\u652F\u6301willkyu"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fa68ea92e6ed9c346afe54871f1d5b72, type: 2}
   m_sharedMaterial: {fileID: -3312382659647019473, guid: fa68ea92e6ed9c346afe54871f1d5b72, type: 2}
@@ -2073,7 +2073,7 @@ GameObject:
   - component: {fileID: 1308260069}
   - component: {fileID: 1308260068}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2656,7 +2656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8972e338eaab4ee46ac099a68fbcd848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelAsset: {fileID: 5022602860645237092, guid: 2ed175ba9c7bbcf449140e2568ed2684, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: d5fbc3f503fcc7d4280c587570f15d7b, type: 3}
 --- !u!4 &1522242057
 Transform:
   m_ObjectHideFlags: 0

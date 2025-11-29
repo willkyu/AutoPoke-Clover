@@ -2,6 +2,7 @@ public enum DetectionClass
 {
     Black,
     Dialogue,
+    BlankDialogue,
     RSE_s,
     RSE_ns,
     ShinyStar,
@@ -10,12 +11,14 @@ public enum DetectionClass
     FrLg_s,
     FrLg_ns,
     BeforeEnter,
-    BiteEng,
-    FishGoneEng,
-    GetFishEng,
-    NoFishEng,
-    BiteJpn,
-    FishGoneJpn,
-    GetFishJpn,
-    NoFishJpn
+    Options, //
+    // BiteEng,
+    // FishGoneEng,
+    // GetFishEng,
+    // NoFishEng,
+    // BiteJpn,
+    // FishGoneJpn,
+    // GetFishJpn,
+    // NoFishJpn
 }
+

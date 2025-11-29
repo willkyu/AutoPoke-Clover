@@ -49,6 +49,7 @@ public class APCore : MonoBehaviour
         new Dictionary<DetectionClass, float>
     {
     { DetectionClass.Dialogue, 0.6f },
+    { DetectionClass.BlankDialogue, 0.6f },
     { DetectionClass.RSE_s, 0.5f },
     { DetectionClass.RSE_ns, 0.5f },
     { DetectionClass.ShinyStar, 0.6f },
@@ -57,14 +58,14 @@ public class APCore : MonoBehaviour
     { DetectionClass.FrLg_s, 0.5f },
     { DetectionClass.FrLg_ns, 0.5f },
     { DetectionClass.BeforeEnter, 0.8f },
-    { DetectionClass.BiteEng, 0.5f },
-    { DetectionClass.FishGoneEng, 0.7f },
-    { DetectionClass.GetFishEng, 0.5f },
-    { DetectionClass.NoFishEng, 0.7f },
-    { DetectionClass.BiteJpn, 0.5f },
-    { DetectionClass.FishGoneJpn, 0.6f },
-    { DetectionClass.GetFishJpn, 0.6f },
-    { DetectionClass.NoFishJpn, 0.5f },
+    // { DetectionClass.BiteEng, 0.5f },
+    // { DetectionClass.FishGoneEng, 0.7f },
+    // { DetectionClass.GetFishEng, 0.5f },
+    // { DetectionClass.NoFishEng, 0.7f },
+    // { DetectionClass.BiteJpn, 0.5f },
+    // { DetectionClass.FishGoneJpn, 0.6f },
+    // { DetectionClass.GetFishJpn, 0.6f },
+    // { DetectionClass.NoFishJpn, 0.5f },
     };
 
 
