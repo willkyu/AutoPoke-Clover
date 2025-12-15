@@ -58,14 +58,15 @@ public class APCore : MonoBehaviour
     { DetectionClass.FrLg_s, 0.5f },
     { DetectionClass.FrLg_ns, 0.5f },
     { DetectionClass.BeforeEnter, 0.8f },
+    { DetectionClass.Options, 0.5f },
     // { DetectionClass.BiteEng, 0.5f },
-    // { DetectionClass.FishGoneEng, 0.7f },
-    // { DetectionClass.GetFishEng, 0.5f },
-    // { DetectionClass.NoFishEng, 0.7f },
-    // { DetectionClass.BiteJpn, 0.5f },
-    // { DetectionClass.FishGoneJpn, 0.6f },
-    // { DetectionClass.GetFishJpn, 0.6f },
-    // { DetectionClass.NoFishJpn, 0.5f },
+            // { DetectionClass.FishGoneEng, 0.7f },
+            // { DetectionClass.GetFishEng, 0.5f },
+            // { DetectionClass.NoFishEng, 0.7f },
+            // { DetectionClass.BiteJpn, 0.5f },
+            // { DetectionClass.FishGoneJpn, 0.6f },
+            // { DetectionClass.GetFishJpn, 0.6f },
+            // { DetectionClass.NoFishJpn, 0.5f },
     };
 
 

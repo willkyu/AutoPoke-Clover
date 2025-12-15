@@ -7,7 +7,7 @@ public enum Language { Jpn, Eng }
 public enum GameVersion { RS, E, FrLg }
 public enum TaskMode { Single, Multiple }
 public enum Function { Move, Stationary, Fish }
-public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA }
+public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA, Gift }
 
 [Serializable]
 public struct TaskParams
@@ -74,7 +74,7 @@ public class APTask : MonoBehaviour
     public bool repel = false;
     public bool lr = true;
     // Extra
-    public int extraData;
+    public int extraData = 0;
 
     [Header("状态只读")]
     [SerializeField] private bool running;

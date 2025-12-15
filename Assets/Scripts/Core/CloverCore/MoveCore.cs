@@ -14,20 +14,24 @@ public class MoveCore : GeneralCore
     {
         Debug.Log("start");
         ReleaseAllKeys();
-        // if (config.repel) UseRepel();
+        if (config.jump || config.run)
+        {
+            ctrl.KeyDown(GameKey.B);
+        }
         if (!config.jump) while (!DetectBlack())
             {
-                while (Detect(DetectionClass.Dialogue))
+                while (DetectDialogue())
                 {
-                    Wait(300); if (!Detect(DetectionClass.Dialogue)) break;
+                    Wait(300); if (!DetectDialogue()) break;
                     Press(GameKey.B); Wait(300); repelFlag = false;
                 }
-                if (!repelFlag && config.repel) UseRepel();
+                if (config.repel && !repelFlag) UseRepel();
                 if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
-        if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
+        // else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
+        else WaitTillBlack();
+        // if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
         ReleaseAllKeys();
         WaitTillNotBlack();
     }

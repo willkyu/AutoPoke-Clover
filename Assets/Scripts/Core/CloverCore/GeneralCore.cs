@@ -92,6 +92,7 @@ public class GeneralCore : TaskCore
     {
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
+    protected bool DetectDialogue() { return Detect(DetectionClass.Dialogue) || detectRes.Contains(DetectionClass.BlankDialogue); }
     protected void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); else Wait(200); } }
     protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
     protected void SoftReset()
@@ -135,21 +136,11 @@ public class GeneralCore : TaskCore
         Press(GameKey.Start); Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
-        if (config.language == Language.Jpn)
-        {
-            // TODO collect and retrain
-            Press(GameKey.A);
-            Press(GameKey.A);
-        }
-        else
-        {
-            UnityEngine.Debug.Log(config.language);
-            while (!Detect(DetectionClass.Dialogue)) Press(GameKey.A);
-            while (Detect(DetectionClass.Dialogue)) Press(GameKey.A);
-        }
+        while (!DetectDialogue()) Press(GameKey.A);
+        while (DetectDialogue()) Press(GameKey.A);
         while (!DetectBlack()) Press(GameKey.B);
         WaitTillNotBlack();
-        Press(GameKey.B);
+        while (Detect(DetectionClass.Options)) Press(GameKey.B);
         repelFlag = true;
         UnityEngine.Debug.Log("use repel end");
 
@@ -187,25 +178,21 @@ public class GeneralCore : TaskCore
         }
     }
 
-    protected bool ShinyDetectInBag()
+    protected bool ShinyDetectInBag(int partyIdx = 1, bool checkFirst = false)
     {
-        if (config.gameVersion == GameVersion.FrLg)
-        {
-            Press(GameKey.Start); Press(GameKey.A);
-            WaitTillBlack();
-            WaitTillNotBlack();
-            Press(GameKey.A); Wait(200); Press(GameKey.A);
-            WaitTillBlack();
-            WaitTillNotBlack();
-            Wait(500);
-            return Detect(DetectionClass.FrLg_s);
-        }
-        else if (config.gameVersion == GameVersion.RS || config.gameVersion == GameVersion.E)
-        {
-            //todo
-            throw new System.NotImplementedException();
-        }
-        throw new System.NotImplementedException();
+
+        Press(GameKey.Start);
+        for (int i = 0; i < partyIdx; i++) Press(GameKey.Down);
+        Press(GameKey.A);
+        WaitTillBlack();
+        WaitTillNotBlack();
+        if (!checkFirst) { Press(GameKey.Up); Press(GameKey.Up); }
+        Press(GameKey.A); Wait(200); Press(GameKey.A);
+        WaitTillBlack();
+        WaitTillNotBlack();
+        Wait(500);
+        return Detect(config.gameVersion == GameVersion.FrLg ? DetectionClass.FrLg_s : DetectionClass.RSE_s);
+
     }
 
 

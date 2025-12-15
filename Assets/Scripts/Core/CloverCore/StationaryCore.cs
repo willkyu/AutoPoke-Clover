@@ -8,17 +8,20 @@ public class FrLgStartersCore : GeneralCore
 
     protected override void Encounter()
     {
-        Debug.Log($"encounter hit duration: {config.hitDuration}");
-        Press(GameKey.A);
-        for (int i = 0; i < 15; i++) { Press(GameKey.A); Wait(200); }
-        while (Detect(DetectionClass.Dialogue)) { Press(GameKey.B); Wait(200); }
-        while (!Detect(DetectionClass.Dialogue)) { Wait(200); }
-        while (Detect(DetectionClass.Dialogue)) { Press(GameKey.B); Wait(200); }
+        bool confirmFlag = true;
+        Press(GameKey.A); Wait(500);
+        while (DetectDialogue())
+        {
+            if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
+            else Press(GameKey.B);
+        }
+        while (!DetectDialogue()) Wait(500);
+        while (DetectDialogue()) Press(GameKey.A);
     }
 
     protected override bool ShinyDetect()
     {
-        return ShinyDetectInBag();
+        return ShinyDetectInBag(partyIdx: 0, checkFirst: true);
     }
 
     protected override void AfterDetect()
@@ -80,4 +83,27 @@ public class NormalHitACore : GeneralCore
     }
 }
 
+public class GiftCore : GeneralCore
+{
+    public GiftCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
+    protected override void Encounter()
+    {
+        bool confirmFlag = config.extraData == 0;
+        Press(GameKey.A); Wait(500);
+        while (DetectDialogue())
+        {
+            if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
+            else Press(GameKey.B);
+        }
+    }
 
+    protected override bool ShinyDetect()
+    {
+        return ShinyDetectInBag();
+    }
+
+    protected override void AfterDetect()
+    {
+        SoftReset();
+    }
+}

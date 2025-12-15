@@ -190,10 +190,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 3
-    m_Right: 3
-    m_Top: 3
-    m_Bottom: 3
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
   m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+  m_Color: {r: 0.2784314, g: 0.2784314, b: 0.2784314, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -433,11 +433,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u8FD9\u662FAutoPoke: Clover\u7684Alpha\u6D4B\u8BD5\u7248\u672C\u3002\n\u7248\u672C\u53F7v0.0.5_alpha\n(112925)\n\n\u6682\u65F6\u672A\u52A0\u5165\u4EE5\u4E0B\u529F\u80FD\uFF1A\n-
+  m_text: "\u8FD9\u662FAutoPoke: Clover\u7684Alpha\u6D4B\u8BD5\u7248\u672C\u3002\n\u7248\u672C\u53F7v0.0.6_alpha\n(121525)\n\n\u6682\u65F6\u672A\u52A0\u5165\u4EE5\u4E0B\u529F\u80FD\uFF1A\n-
     \u66F4\u6539\u952E\u4F4D\n- \u65E5\u5FD7\u8BB0\u5F55\n- \u95EA\u5149\u901A\u77E5\n-
     \u65E0\u7535\u5B9A\u70B9\u652F\u6301\n- \u81EA\u5B9A\u4E49\u8D77\u59CB\u5E27\u6570\n-
     \u81EA\u5B9A\u4E49\u500D\u901F\n- \u81EA\u5B9A\u4E49\u7A97\u53E3\u540D\u79F0\n 
-    \uFF08\u6A21\u62DF\u5668\u7528\uFF09\n- \u66F4\u591A\u7684\u5237\u95EA\u529F\u80FD\n-
+    \uFF08\u5176\u4ED6\u8F6F\u4EF6\u7528\uFF09\n- \u66F4\u591A\u7684\u5237\u95EA\u529F\u80FD\n-
     \u597D\u770B\u7684UI\n\n\u5982\u679C\u9047\u5230bug\u8BF7\u53CD\u9988\uFF0C\u611F\u8C22\u6D4B\u8BD5:D\n\n\xA9willkyu"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fa68ea92e6ed9c346afe54871f1d5b72, type: 2}
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 378781698}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2342,14 +2342,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 0.8627451, g: 0.7882353, b: 0.6627451, a: 1}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

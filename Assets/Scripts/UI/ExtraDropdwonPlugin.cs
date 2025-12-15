@@ -19,7 +19,8 @@ public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
         {
             // { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
             { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } },
-            { StationaryMode.NormalHitA, new List<string> { "不执行方向操作", "左", "右", "上", "下" } }
+            { StationaryMode.NormalHitA, new List<string> { "不执行方向操作", "左", "右", "上", "下" } },
+            {StationaryMode.Gift, new List<string> { "需要确认是否获取", "不需要确认是否获取" }},
 
 
         };
