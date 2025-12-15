@@ -9,12 +9,12 @@ public class FrLgStartersCore : GeneralCore
     protected override void Encounter()
     {
         bool confirmFlag = true;
-        Press(GameKey.A); Wait(500);
+        Press(GameKey.A); Wait(800);
         while (DetectDialogue())
         {
             if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
             else Press(GameKey.B);
-            Wait(200);
+            if (confirmFlag) Wait(800);
         }
         while (!DetectDialogue()) Wait(500);
         while (DetectDialogue()) Press(GameKey.A);
@@ -90,11 +90,12 @@ public class GiftCore : GeneralCore
     protected override void Encounter()
     {
         bool confirmFlag = config.extraData == 0;
-        Press(GameKey.A); Wait(500);
+        Press(GameKey.A); Wait(800);
         while (DetectDialogue())
         {
             if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
             else Press(GameKey.B);
+            if (confirmFlag) Wait(800);
         }
     }
 

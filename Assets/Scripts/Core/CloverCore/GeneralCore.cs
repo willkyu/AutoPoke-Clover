@@ -76,13 +76,17 @@ public class GeneralCore : TaskCore
             ctrl.KeyUp(key);
         }
     }
-    protected bool Detect(DetectionClass targetClass, bool detectBlack = false)
+    protected bool Detect(DetectionClass targetClass, bool detectBlack = false, int fixedFPS = 10)
     {
         var sw = Stopwatch.StartNew();
         detectRes = detector.Detect(Win32Utils.CaptureWindow(hwnd, out _, out _), detectBlack);
         sw.Stop();
         double elapsedMs = sw.Elapsed.TotalMilliseconds;
-
+        if (fixedFPS != 0 && 1000 / fixedFPS - elapsedMs > 0)
+        {
+            elapsedMs = 1000 / fixedFPS - elapsedMs;
+            Wait((int)elapsedMs);
+        }
         // 计算 FPS
         double fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
         this.TriggerEvent(EventName.SetFPS, new SetFPSEventArgs { fps = fps });
