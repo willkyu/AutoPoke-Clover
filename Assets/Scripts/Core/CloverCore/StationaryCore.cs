@@ -14,6 +14,7 @@ public class FrLgStartersCore : GeneralCore
         {
             if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
             else Press(GameKey.B);
+            Wait(200);
         }
         while (!DetectDialogue()) Wait(500);
         while (DetectDialogue()) Press(GameKey.A);
