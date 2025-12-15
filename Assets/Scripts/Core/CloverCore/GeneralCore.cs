@@ -76,7 +76,7 @@ public class GeneralCore : TaskCore
             ctrl.KeyUp(key);
         }
     }
-    protected bool Detect(DetectionClass targetClass, bool detectBlack = false, int fixedFPS = 10)
+    protected bool Detect(DetectionClass targetClass, bool detectBlack = false, int fixedFPS = 0)
     {
         var sw = Stopwatch.StartNew();
         detectRes = detector.Detect(Win32Utils.CaptureWindow(hwnd, out _, out _), detectBlack);
