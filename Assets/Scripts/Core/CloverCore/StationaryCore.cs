@@ -8,16 +8,12 @@ public class FrLgStartersCore : GeneralCore
 
     protected override void Encounter()
     {
-        Press(GameKey.A);
-        while (!Detect(DetectionClass.Next)) Wait(200);
-        Wait(200);
-        Press(GameKey.A);
-        while (!Detect(DetectionClass.Options)) Wait(200);
-        Wait(200);
+        Press(GameKey.A); Wait(1000);
+        Press(GameKey.A); Wait(1000);
         Press(GameKey.A);
         while (DetectDialogue()) Press(GameKey.B);
         while (!DetectDialogue()) Wait(500);
-        while (DetectDialogue()) Press(GameKey.A);
+        while (DetectDialogue()) Press(GameKey.B);
         // bool confirmFlag = true;
         // Press(GameKey.A); Wait(1000);
         // while (DetectDialogue())

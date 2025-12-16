@@ -57,8 +57,9 @@ public class GeneralCore : TaskCore
     protected void Wait(int waitTimeMS)
     {
 
-        Thread.Sleep((int)(waitTimeMS > detectTimeMS ? (waitTimeMS - detectTimeMS) : 0 / config.speed));
-        detectTimeMS = 0;
+        // Thread.Sleep(waitTimeMS > detectTimeMS ? (int)((waitTimeMS - detectTimeMS) / config.speed) : 0);
+        Thread.Sleep((int)(waitTimeMS / config.speed));
+        // detectTimeMS = 0;
     }
     protected void Press(GameKey key, bool wait = true)
     {
