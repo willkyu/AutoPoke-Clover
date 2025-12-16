@@ -10,8 +10,10 @@ public class FrLgStartersCore : GeneralCore
     {
         Press(GameKey.A);
         while (!Detect(DetectionClass.Next)) Wait(200);
+        Wait(200);
         Press(GameKey.A);
         while (!Detect(DetectionClass.Options)) Wait(200);
+        Wait(200);
         Press(GameKey.A);
         while (DetectDialogue()) Press(GameKey.B);
         while (!DetectDialogue()) Wait(500);
