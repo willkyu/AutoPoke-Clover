@@ -23,7 +23,7 @@ public class ControlUtils
         // Debug.Log($"keyup {gameKey.ToString()}");
         Win32Utils.ReleaseKey(hwnd, Settings.Keys.GetKey(gameKey));
     }
-    public void KeyHit(GameKey gameKey, int hitDuration = 100)
+    public void KeyHit(GameKey gameKey, int hitDuration = 120)
     {
         // CoroutineRunner.RunSafe(KeyHitCO(gameKey, hitDuration / speed));
         // KeyHitCO(gameKey, hitDuration / speed);

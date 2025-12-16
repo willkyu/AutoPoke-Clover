@@ -8,16 +8,24 @@ public class FrLgStartersCore : GeneralCore
 
     protected override void Encounter()
     {
-        bool confirmFlag = true;
-        Press(GameKey.A); Wait(800);
-        while (DetectDialogue())
-        {
-            if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
-            else Press(GameKey.B);
-            if (confirmFlag) Wait(800);
-        }
+        Press(GameKey.A);
+        while (!Detect(DetectionClass.Next)) Wait(200);
+        Press(GameKey.A);
+        while (!Detect(DetectionClass.Options)) Wait(200);
+        Press(GameKey.A);
+        while (DetectDialogue()) Press(GameKey.B);
         while (!DetectDialogue()) Wait(500);
         while (DetectDialogue()) Press(GameKey.A);
+        // bool confirmFlag = true;
+        // Press(GameKey.A); Wait(1000);
+        // while (DetectDialogue())
+        // {
+        //     if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
+        //     else Press(GameKey.B);
+        //     if (confirmFlag) Wait(1000);
+        // }
+        // while (!DetectDialogue()) Wait(500);
+        // while (DetectDialogue()) Press(GameKey.A);
     }
 
     protected override bool ShinyDetect()
@@ -90,12 +98,12 @@ public class GiftCore : GeneralCore
     protected override void Encounter()
     {
         bool confirmFlag = config.extraData == 0;
-        Press(GameKey.A); Wait(800);
+        Press(GameKey.A); Wait(1000);
         while (DetectDialogue())
         {
             if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
             else Press(GameKey.B);
-            if (confirmFlag) Wait(800);
+            if (confirmFlag) Wait(1000);
         }
     }
 

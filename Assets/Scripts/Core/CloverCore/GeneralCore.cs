@@ -22,6 +22,7 @@ public class GeneralCore : TaskCore
     protected ControlUtils ctrl;
     protected readonly System.Random rand = new System.Random();
     protected List<DetectionClass> detectRes;
+    protected int detectTimeMS;
     protected bool repelFlag = false;
 
     // ------------------ Key Arrays ------------------
@@ -55,14 +56,16 @@ public class GeneralCore : TaskCore
     // ------------------ Functions ------------------
     protected void Wait(int waitTimeMS)
     {
-        Thread.Sleep((int)(waitTimeMS / config.speed));
+
+        Thread.Sleep((int)(waitTimeMS > detectTimeMS ? (waitTimeMS - detectTimeMS) : 0 / config.speed));
+        detectTimeMS = 0;
     }
     protected void Press(GameKey key, bool wait = true)
     {
         // Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(key));
 
         ctrl.KeyHit(key, config.hitDuration);
-        Wait(wait ? 200 : 0);
+        Wait(wait ? 300 : 0);
     }
     protected void RandomPress(GameKey[] keys)
     {
@@ -82,7 +85,8 @@ public class GeneralCore : TaskCore
         detectRes = detector.Detect(Win32Utils.CaptureWindow(hwnd, out _, out _), detectBlack);
         sw.Stop();
         double elapsedMs = sw.Elapsed.TotalMilliseconds;
-        if (fixedFPS != 0 && 1000 / fixedFPS - elapsedMs > 0)
+        detectTimeMS = (int)elapsedMs;
+        if (fixedFPS != 0 && 1000 / fixedFPS > elapsedMs)
         {
             elapsedMs = 1000 / fixedFPS - elapsedMs;
             Wait((int)elapsedMs);
@@ -184,8 +188,8 @@ public class GeneralCore : TaskCore
 
     protected bool ShinyDetectInBag(int partyIdx = 1, bool checkFirst = false)
     {
-
-        Press(GameKey.Start);
+        // while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(200); }
+        Press(GameKey.Start); Wait(400);
         for (int i = 0; i < partyIdx; i++) Press(GameKey.Down);
         Press(GameKey.A);
         WaitTillBlack();
