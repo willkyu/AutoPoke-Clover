@@ -57,16 +57,16 @@ public class GeneralCore : TaskCore
     protected void Wait(int waitTimeMS)
     {
 
-        // Thread.Sleep(waitTimeMS > detectTimeMS ? (int)((waitTimeMS - detectTimeMS) / config.speed) : 0);
-        Thread.Sleep((int)(waitTimeMS / config.speed));
-        // detectTimeMS = 0;
+        if (waitTimeMS > detectTimeMS) Thread.Sleep((int)((waitTimeMS - detectTimeMS) / config.speed));
+        detectTimeMS = 0;
+        // Thread.Sleep((int)(waitTimeMS / config.speed));
     }
     protected void Press(GameKey key, bool wait = true)
     {
         // Win32Utils.PressKey(hwnd, Settings.Keys.GetKey(key));
 
         ctrl.KeyHit(key, config.hitDuration);
-        Wait(wait ? 300 : 0);
+        if (wait) Wait(300);
     }
     protected void RandomPress(GameKey[] keys)
     {
@@ -87,11 +87,11 @@ public class GeneralCore : TaskCore
         sw.Stop();
         double elapsedMs = sw.Elapsed.TotalMilliseconds;
         detectTimeMS = (int)elapsedMs;
-        if (fixedFPS != 0 && 1000 / fixedFPS > elapsedMs)
-        {
-            elapsedMs = 1000 / fixedFPS - elapsedMs;
-            Wait((int)elapsedMs);
-        }
+        // if (fixedFPS != 0 && 1000 / fixedFPS > elapsedMs)
+        // {
+        //     elapsedMs = 1000 / fixedFPS - elapsedMs;
+        //     Wait((int)elapsedMs);
+        // }
         // 计算 FPS
         double fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
         this.TriggerEvent(EventName.SetFPS, new SetFPSEventArgs { fps = fps });

@@ -937,7 +937,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   display: {fileID: 210221256}
   resultText: {fileID: 2110181915}
-  modelAsset: {fileID: 5022602860645237092, guid: d5fbc3f503fcc7d4280c587570f15d7b, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 47b3babf02aaa2f4cb72688db1300845, type: 3}
 --- !u!4 &621730605
 Transform:
   m_ObjectHideFlags: 0
@@ -2656,7 +2656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8972e338eaab4ee46ac099a68fbcd848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelAsset: {fileID: 5022602860645237092, guid: d5fbc3f503fcc7d4280c587570f15d7b, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 47b3babf02aaa2f4cb72688db1300845, type: 3}
 --- !u!4 &1522242057
 Transform:
   m_ObjectHideFlags: 0
