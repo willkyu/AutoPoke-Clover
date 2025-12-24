@@ -70,6 +70,11 @@ public class Detector : IDisposable
         foreach (var kv in classThresholds)
             if (scores.TryGetValue(kv.Key, out var s) && s > kv.Value)
                 list.Add(kv.Key);
+        // Debug.Log(scores.ToString());
+        Debug.Log(string.Join(
+    ", ",
+    scores.Select(kv => $"{kv.Key}={kv.Value:F3}")
+));
         return list;
     }
 
@@ -95,11 +100,13 @@ public class Detector : IDisposable
             // 主线程：走同步快路径（立即执行 GPU，避免等待下一帧）
             if (MainThreadDispatcher.IsMainThread)
             {
+                // Debug.Log("[Detector] main thread.");
                 var res = core.DetectSyncOnMainThread(image, detectBlack);
                 return res;
             }
             else
             {
+                // Debug.Log("[Detector] side thread.");
                 // 后台线程：走异步路线C（后台预/后处理 + 主线程轻量GPU + PumpHub驱动）
                 var task = core.DetectAsync(image, detectBlack);
 

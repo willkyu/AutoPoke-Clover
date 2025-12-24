@@ -28,3 +28,9 @@ public class SetFPSEventArgs : EventArgs
     // public Guid guid;
     public double fps;
 }
+
+public class SetWinCountEventArgs : EventArgs
+{
+    // public Guid guid;
+    public int winCount;
+}

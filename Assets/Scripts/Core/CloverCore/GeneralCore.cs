@@ -24,6 +24,7 @@ public class GeneralCore : TaskCore
     protected List<DetectionClass> detectRes;
     protected int detectTimeMS;
     protected bool repelFlag = false;
+    protected bool callOrRepelDialogueFlag = false;
 
     // ------------------ Key Arrays ------------------
     protected GameKey[] SoftResetKeys = new GameKey[]
@@ -102,7 +103,7 @@ public class GeneralCore : TaskCore
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
     protected bool DetectDialogue() { return Detect(DetectionClass.Dialogue) || detectRes.Contains(DetectionClass.BlankDialogue); }
-    protected void WaitTillBlack(bool PressA = false) { while (!DetectBlack()) { if (PressA) Press(GameKey.A); else Wait(200); } }
+    protected void WaitTillBlack(bool pressA = false) { while (!DetectBlack()) { if (pressA) Press(GameKey.A); else Wait(200); } }
     protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
     protected void SoftReset()
     {
@@ -128,7 +129,7 @@ public class GeneralCore : TaskCore
             }
         }
         // Press(GameKey.A);
-        WaitTillBlack(PressA: true);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
         if (config.gameVersion == GameVersion.FrLg)
         {
@@ -142,7 +143,7 @@ public class GeneralCore : TaskCore
     protected void UseRepel()
     {
         UnityEngine.Debug.Log("use repel start");
-        Press(GameKey.Start); Press(GameKey.A);
+        OpenMenu(); Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
         while (!DetectDialogue()) Press(GameKey.A);
@@ -155,12 +156,14 @@ public class GeneralCore : TaskCore
 
     }
 
+    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); } }
+
     protected void Run()
     {
         Press(GameKey.Right);
         Press(GameKey.Down);
         Press(GameKey.A);
-        WaitTillBlack(PressA: true);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
         Wait(1200);
     }
@@ -190,12 +193,12 @@ public class GeneralCore : TaskCore
     protected bool ShinyDetectInBag(int partyIdx = 1, bool checkFirst = false)
     {
         // while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(200); }
-        Press(GameKey.Start); Wait(400);
-        for (int i = 0; i < partyIdx; i++) Press(GameKey.Down);
-        Press(GameKey.A);
-        WaitTillBlack();
+        OpenMenu(); Wait(400);
+        for (int i = 0; i < partyIdx; i++) { Press(GameKey.Down); Wait(200); }
+        // Press(GameKey.A);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
-        if (!checkFirst) { Press(GameKey.Up); Press(GameKey.Up); }
+        if (!checkFirst) { Press(GameKey.Up); Wait(200); Press(GameKey.Up); Wait(200); }
         Press(GameKey.A); Wait(200); Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();

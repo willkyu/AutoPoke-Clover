@@ -9,16 +9,15 @@ public class FrLgStartersCore : GeneralCore
     protected override void Encounter()
     {
         Debug.Log("start");
-
-        Press(GameKey.A); Wait(1000);
-        Press(GameKey.A); Wait(1000);
-        Press(GameKey.A);
-        while (DetectDialogue()) Press(GameKey.B, wait: false);
-        // Debug.Log("no dialogue");
-        while (!DetectDialogue()) Wait(50);
-        // Debug.Log("last dialogue");
+        while (!Detect(DetectionClass.Options)) { Press(GameKey.A); Wait(1000); } // Make sure the whole text appears.
+        // Press(GameKey.A); Wait(1000);
+        while (Detect(DetectionClass.Options)) { Press(GameKey.A); }
         while (DetectDialogue()) Press(GameKey.B);
-        // Debug.Log("end");
+        Debug.Log("no dialogue");
+        while (!DetectDialogue()) Wait(500);
+        Debug.Log("last dialogue");
+        while (DetectDialogue()) Press(GameKey.B);
+        Debug.Log("end");
 
         // bool confirmFlag = true;
         // Press(GameKey.A); Wait(1000);
@@ -53,7 +52,7 @@ public class RSEStartersCore : GeneralCore
         WaitTillNotBlack();
         if (config.extraData == 0) Press(GameKey.Left);
         else if (config.extraData == 2) Press(GameKey.Right);
-        WaitTillBlack(PressA: true);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
     }
 
@@ -81,7 +80,7 @@ public class NormalHitACore : GeneralCore
             case 3: Press(GameKey.Up); break;
             case 4: Press(GameKey.Down); break;
         }
-        WaitTillBlack(PressA: true);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
     }
 
@@ -119,5 +118,42 @@ public class GiftCore : GeneralCore
     protected override void AfterDetect()
     {
         SoftReset();
+    }
+}
+
+public class MewCore : GeneralCore
+{
+    public MewCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
+    protected override void Encounter()
+    {
+        // ctrl.KeyDown(GameKey.B);
+        // ctrl.KeyDown(GameKey.B, config.counter % 2);
+        while (!DetectBlack()) Press(GameKey.Up);
+        WaitTillNotBlack();
+        Wait(3000);
+        for (int i = 0; i < 5; i++) Press(GameKey.Up);
+        for (int i = 0; i < 5; i++) Press(GameKey.Right);
+        for (int i = 0; i < 8; i++) Press(GameKey.Up);
+        Press(GameKey.Right);
+        while (!DetectBlack()) Press(GameKey.A);
+        WaitTillNotBlack();
+    }
+
+    protected override bool ShinyDetect()
+    {
+        return ShinyDetectInBattle();
+    }
+
+    protected override void AfterDetect()
+    {
+        Run();
+        Wait(800);
+        while (DetectDialogue()) Press(GameKey.B);
+        for (int i = 0; i < 6; i++) Press(GameKey.Left);
+        ctrl.KeyDown(GameKey.B);
+        while (!DetectBlack()) Press(GameKey.Down, wait: false);
+        ctrl.KeyUp(GameKey.B);
+        Wait(1200);
+        Press(GameKey.Right); Press(GameKey.Right);
     }
 }

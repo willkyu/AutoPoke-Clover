@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
 {
     [Header("Binding Target")]
-    public MonoBehaviour target;
+    public APTask target;
     public string fieldName = "extraData";
     public StationaryMode stationaryMode;
 

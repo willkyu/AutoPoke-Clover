@@ -126,6 +126,7 @@ public class APCore : MonoBehaviour
         windowBusy.Clear();
         foreach (var h in allWindows) windowBusy[h] = false;
         Debug.Log($"[APCore] Found windows: {allWindows.Count}");
+        this.TriggerEvent(EventName.SetWinCount, new SetWinCountEventArgs { winCount = allWindows.Count });
     }
 
     /// <summary>租借一个空闲窗口；失败返回 IntPtr.Zero</summary>

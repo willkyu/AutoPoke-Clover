@@ -68,7 +68,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class AlphaBoolBtnPlugin : MonoBehaviour
 {
-    public MonoBehaviour target;
+    public APTask target;
     public string fieldName;
 
     [Header("Sprites when value = true")]

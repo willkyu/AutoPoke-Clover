@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 public class AlphaEnumDropdownPlugin : MonoBehaviour
 {
     [Header("Binding Target")]
-    public MonoBehaviour target;   // 要绑定的脚本
+    public APTask target;   // 要绑定的脚本
     public string fieldName;       // 枚举字段名（支持 public 或 [SerializeField] private）
 
     [Header("Options")]

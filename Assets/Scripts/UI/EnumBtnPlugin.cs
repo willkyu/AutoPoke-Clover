@@ -53,7 +53,7 @@ public class AlphaEnumBtnPlugin : MonoBehaviour
 {
 
     // public Sprite[] sprites;
-    public MonoBehaviour target;
+    public APTask target;
     public string fieldName;
     private int idx;
     private Button btn;

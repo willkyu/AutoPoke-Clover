@@ -17,20 +17,28 @@ public class MoveCore : GeneralCore
         if (config.jump || config.run)
         {
             ctrl.KeyDown(GameKey.B);
+            ctrl.KeyDown(GameKey.B, config.counter % 2);
         }
         if (!config.jump) while (!DetectBlack())
             {
                 while (DetectDialogue())
                 {
-                    Wait(300); if (!DetectDialogue()) break;
-                    Press(GameKey.B); Wait(300); repelFlag = false;
+                    // Wait(300); if (!DetectDialogue()) break;
+                    // Press(GameKey.B); Wait(300); repelFlag = false;
+                    Wait(1000); Press(GameKey.B); repelFlag = false; callOrRepelDialogueFlag = true;
+                }
+                if (callOrRepelDialogueFlag && config.run)
+                {
+                    ctrl.KeyDown(GameKey.B);
+                    ctrl.KeyDown(GameKey.B, config.counter % 2);
+                    callOrRepelDialogueFlag = false;
                 }
                 if (config.repel && !repelFlag) UseRepel();
-                if (config.run) ctrl.KeyDown(GameKey.B);
+                // if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        // else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
-        else WaitTillBlack();
+        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
+        // else WaitTillBlack();
         // if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
         ReleaseAllKeys();
         WaitTillNotBlack();
@@ -42,7 +50,7 @@ public class MoveCore : GeneralCore
         WaitTillNotBlack();
         Press(GameKey.Up); Press(GameKey.Up);
         if (config.gameVersion == GameVersion.FrLg) { Press(GameKey.A); Press(GameKey.Down); }
-        WaitTillBlack(PressA: true);
+        WaitTillBlack(pressA: true);
         WaitTillNotBlack();
     }
 

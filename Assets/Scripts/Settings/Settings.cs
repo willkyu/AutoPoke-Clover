@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -59,4 +60,12 @@ public class Settings
         File.WriteAllText(settingsPath, json);
         Debug.Log("💾 Settings saved to " + settingsPath);
     }
+
+    public static void ResetKeyMapping()
+    {
+        Current.keyMapping = new KeyMappingConfig();
+        SaveSettings();
+        Current.TriggerEvent(EventName.Refresh);
+    }
+
 }

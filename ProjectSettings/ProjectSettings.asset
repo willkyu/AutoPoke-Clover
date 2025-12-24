@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: willkyu Studio
   productName: AutoPoke_Clover
-  defaultCursor: {fileID: 2800000, guid: 03f5d99aa0474a044801ed27dcfb6a14, type: 3}
+  defaultCursor: {fileID: 2800000, guid: 5a27e818274cf5343bc2f4c939df9b18, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
@@ -139,7 +139,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 0.0.6.5_alpha(121625)
+  bundleVersion: v0.0.8_alpha(Christmas25 Edition)
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -286,7 +286,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 875eb31bd082cb04cb2b6501f6430b6e, type: 3}
+      m_Icon: {fileID: 2800000, guid: c54077b049ac90e4c9e6ad521c7da899, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

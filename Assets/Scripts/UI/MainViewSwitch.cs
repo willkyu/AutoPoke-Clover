@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 public class MainViewSwitch : MonoBehaviour
 {
     public GameObject[] views;
-    public MonoBehaviour target;
+    public APTask target;
     public string fieldName = "function";
     private int idx;
     private FieldInfo field;

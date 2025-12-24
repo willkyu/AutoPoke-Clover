@@ -7,7 +7,7 @@ public enum Language { Jpn, Eng }
 public enum GameVersion { RS, E, FrLg }
 public enum TaskMode { Single, Multiple }
 public enum Function { Move, Stationary, Fish }
-public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA, Gift }
+public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA, Gift, Mew }
 
 [Serializable]
 public struct TaskParams
