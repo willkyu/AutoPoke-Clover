@@ -24,7 +24,7 @@ public static class MailService
         emailFormat.SmtpClient = Settings.Notification.outboxSmtpHost;
         emailFormat.AuthorizationCode = Settings.Notification.outboxAuthorizationCode;
         emailFormat.To = Settings.Notification.inboxAddress;
-        emailFormat.Subject = $"[AutoPoke] Get shiny Pokemon in {count} times";
+        emailFormat.Subject = $"[AutoPoke] Got shiny Pokemon in {count} times!";
         emailFormat.ImagePath = imgPath;
         return _SendEmail(emailFormat);
     }
@@ -151,7 +151,7 @@ public class EmailFormat
 public static class ToastService
 {
     // 你要固定的 AUMID（必须与注册脚本写入一致）
-    public const string DefaultAumid = "AutoPoke.AutoPoke";
+    public const string DefaultAumid = "willkyu.AutoPoke";
     public const string DefaultShortcutName = "AutoPoke";
 
     // StreamingAssets/ToastSender/
