@@ -88,11 +88,11 @@ public class GeneralCore : TaskCore
         sw.Stop();
         double elapsedMs = sw.Elapsed.TotalMilliseconds;
         detectTimeMS = (int)elapsedMs;
-        // if (fixedFPS != 0 && 1000 / fixedFPS > elapsedMs)
-        // {
-        //     elapsedMs = 1000 / fixedFPS - elapsedMs;
-        //     Wait((int)elapsedMs);
-        // }
+        if (fixedFPS != 0 && 1000 / fixedFPS > elapsedMs)
+        {
+            elapsedMs = 1000 / fixedFPS - elapsedMs;
+            Wait((int)elapsedMs);
+        }
         // 计算 FPS
         double fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
         this.TriggerEvent(EventName.SetFPS, new SetFPSEventArgs { fps = fps });
@@ -103,7 +103,7 @@ public class GeneralCore : TaskCore
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
     protected bool DetectDialogue() { return Detect(DetectionClass.Dialogue) || detectRes.Contains(DetectionClass.BlankDialogue); }
-    protected void WaitTillBlack(bool pressA = false) { while (!DetectBlack()) { if (pressA) Press(GameKey.A); else Wait(200); } }
+    protected void WaitTillBlack(bool pressA = false, bool wait = true) { while (!DetectBlack()) { if (pressA) Press(GameKey.A, wait: wait); else if (wait) Wait(200); } }
     protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
     protected void SoftReset()
     {
@@ -162,8 +162,11 @@ public class GeneralCore : TaskCore
     {
         Press(GameKey.Right);
         Press(GameKey.Down);
-        Press(GameKey.A);
-        WaitTillBlack(pressA: true);
+        // Repeat in case
+        Press(GameKey.Right);
+        Press(GameKey.Down);
+        // Press(GameKey.A);
+        WaitTillBlack(pressA: true, wait: false);
         WaitTillNotBlack();
         Wait(1200);
     }
@@ -210,8 +213,9 @@ public class GeneralCore : TaskCore
 
     protected void ShinyHandle()
     {
-        // TODO
-        Win32Utils.SaveWindowScreenshot(hwnd);
+        string imgPath = Win32Utils.SaveWindowScreenshot(hwnd);
+        if (Settings.Notification.sendToast) ToastService.NotifyShiny(config.counter, imgPath);
+        if (Settings.Notification.sendMail) MailService.SendMailShiny(config.counter, imgPath);
     }
 
     protected virtual void Encounter() { throw new System.NotImplementedException(); }

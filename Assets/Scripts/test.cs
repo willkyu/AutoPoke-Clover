@@ -67,6 +67,21 @@ namespace test
             }
 
             hwnd = windows[0];
+
+
+
+        }
+
+        void Start()
+        {
+            // notification test
+            // Debug.Log("start toast");
+            // ToastService.NotifyShiny(1313, "C:/willkyu/Codes/PY_codes/main_env/APC/data/img/shiny_star/2025-05-13_15-48-21.png");
+            // Debug.Log("end toast");
+
+            // Debug.Log("start email");
+            // MailService.SendMailShiny(1313, "C:/willkyu/Codes/PY_codes/main_env/APC/data/img/shiny_star/2025-05-13_15-48-21.png");
+            // Debug.Log("end email");
         }
 
         void Update()

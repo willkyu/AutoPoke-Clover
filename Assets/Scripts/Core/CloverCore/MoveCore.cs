@@ -13,12 +13,9 @@ public class MoveCore : GeneralCore
     private void NormalEncounter()
     {
         Debug.Log("start");
-        ReleaseAllKeys();
-        if (config.jump || config.run)
-        {
-            ctrl.KeyDown(GameKey.B);
-            ctrl.KeyDown(GameKey.B, config.counter % 2);
-        }
+        // ReleaseAllKeys();
+        if (config.run) ctrl.KeyDown(GameKey.B, config.counter % 2);
+
         if (!config.jump) while (!DetectBlack())
             {
                 while (DetectDialogue())
@@ -37,7 +34,7 @@ public class MoveCore : GeneralCore
                 // if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, config.counter % 2); Wait(200); }
+        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, rand.Next(0, 10)); Wait(200); }
         // else WaitTillBlack();
         // if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
         ReleaseAllKeys();

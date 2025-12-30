@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1891,8 +1890,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u542F\u7528\u90AE\u4EF6\u901A\u77E5 (\u656C\u8BF7\u671F\u5F85)\nEnable
-    Email Notification"
+  m_Text: "\u542F\u7528\u90AE\u4EF6\u901A\u77E5\nEnable Email Notification"
 --- !u!222 &343840984
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10530,8 +10528,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u542F\u7528\u7CFB\u7EDF\u901A\u77E5 (\u656C\u8BF7\u671F\u5F85)\nEnable
-    System Notification"
+  m_Text: "\u542F\u7528\u7CFB\u7EDF\u901A\u77E5\nEnable System Notification"
 --- !u!222 &1525183313
 CanvasRenderer:
   m_ObjectHideFlags: 0
