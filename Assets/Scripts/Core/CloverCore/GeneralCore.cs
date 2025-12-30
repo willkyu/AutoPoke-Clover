@@ -213,6 +213,8 @@ public class GeneralCore : TaskCore
 
     protected void ShinyHandle()
     {
+        Settings.Current.totalShiny++;
+
         string imgPath = Win32Utils.SaveWindowScreenshot(hwnd);
         if (Settings.Notification.sendToast) ToastService.NotifyShiny(config.counter, imgPath);
         if (Settings.Notification.sendMail) MailService.SendMailShiny(config.counter, imgPath);
@@ -229,6 +231,7 @@ public class GeneralCore : TaskCore
         {
             Encounter();
             this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = owner.counter + 1 });
+            Settings.Current.totalCount++;
             if (ShinyDetect()) { ShinyHandle(); break; }
             AfterDetect();
         }

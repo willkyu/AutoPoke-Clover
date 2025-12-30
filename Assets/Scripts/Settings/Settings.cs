@@ -10,6 +10,7 @@ public class Configs
     public KeyMappingConfig keyMapping = new KeyMappingConfig();
     public NotificationConfig notification = new NotificationConfig();
     public int totalCount = 0;
+    public int totalShiny = 0;
 }
 
 public class Settings
