@@ -127,7 +127,7 @@ public class MewCore : GeneralCore
     protected override void Encounter()
     {
         // ctrl.KeyDown(GameKey.B);
-        // ctrl.KeyDown(GameKey.B, config.counter % 2);
+        // ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
         while (!DetectBlack()) Press(GameKey.Up);
         WaitTillNotBlack();
         Wait(3000);

@@ -216,8 +216,8 @@ public class GeneralCore : TaskCore
         Settings.Current.totalShiny++;
 
         string imgPath = Win32Utils.SaveWindowScreenshot(hwnd);
-        if (Settings.Notification.sendToast) ToastService.NotifyShiny(config.counter, imgPath);
-        if (Settings.Notification.sendMail) MailService.SendMailShiny(config.counter, imgPath);
+        if (Settings.Notification.sendToast) ToastService.NotifyShiny(owner.counter, imgPath);
+        if (Settings.Notification.sendMail) MailService.SendMailShiny(owner.counter, imgPath);
     }
 
     protected virtual void Encounter() { throw new System.NotImplementedException(); }

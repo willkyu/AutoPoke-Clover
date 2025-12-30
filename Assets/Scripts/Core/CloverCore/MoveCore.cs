@@ -14,7 +14,7 @@ public class MoveCore : GeneralCore
     {
         Debug.Log("start");
         // ReleaseAllKeys();
-        if (config.run) ctrl.KeyDown(GameKey.B, config.counter % 2);
+        if (config.run) ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
 
         if (!config.jump) while (!DetectBlack())
             {
@@ -27,7 +27,7 @@ public class MoveCore : GeneralCore
                 if (callOrRepelDialogueFlag && config.run)
                 {
                     ctrl.KeyDown(GameKey.B);
-                    ctrl.KeyDown(GameKey.B, config.counter % 2);
+                    ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
                     callOrRepelDialogueFlag = false;
                 }
                 if (config.repel && !repelFlag) UseRepel();
