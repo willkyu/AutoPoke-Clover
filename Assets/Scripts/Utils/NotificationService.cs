@@ -4,13 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
-using System.Net.Mail;
 using System.Net.Mime;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 
@@ -26,6 +22,17 @@ public static class MailService
         emailFormat.To = Settings.Notification.inboxAddress;
         emailFormat.Subject = $"[AutoPoke] Got shiny Pokemon in {count} times!";
         emailFormat.ImagePath = imgPath;
+        return _SendEmail(emailFormat);
+    }
+
+    public static bool Test()
+    {
+        EmailFormat emailFormat = new EmailFormat();
+        emailFormat.From = Settings.Notification.outboxAddress;
+        emailFormat.SmtpClient = Settings.Notification.outboxSmtpHost;
+        emailFormat.AuthorizationCode = Settings.Notification.outboxAuthorizationCode;
+        emailFormat.To = Settings.Notification.inboxAddress;
+        emailFormat.Subject = $"[AutoPoke] Test Notification";
         return _SendEmail(emailFormat);
     }
 
@@ -199,6 +206,13 @@ public static class ToastService
         string title = "AutoPoke";
         string msg = $"Got Shiny Pokemon in {count} SLs! Congratulations!";
         NotifyWithImage(title, msg, screenshotPath, appId);
+    }
+
+    public static void Test(string appId = DefaultAumid)
+    {
+        string title = "AutoPoke";
+        string msg = $"This is the test notification.";
+        NotifyWithImage(title, msg, "", appId);
     }
 
     public static void NotifyWithImage(string title, string content, string imagePath,

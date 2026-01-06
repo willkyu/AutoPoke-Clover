@@ -223,6 +223,11 @@ public class GeneralCore : TaskCore
     protected virtual void Encounter() { throw new System.NotImplementedException(); }
     protected virtual bool ShinyDetect() { throw new System.NotImplementedException(); }
     protected virtual void AfterDetect() { throw new System.NotImplementedException(); }
+    protected virtual void AfterEncounter()
+    {
+        this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = owner.counter + 1 });
+        Settings.Current.totalCount++;
+    }
 
     public void Exe()
     {
@@ -230,8 +235,7 @@ public class GeneralCore : TaskCore
         while (true)
         {
             Encounter();
-            this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = owner.counter + 1 });
-            Settings.Current.totalCount++;
+            AfterEncounter();
             if (ShinyDetect()) { ShinyHandle(); break; }
             AfterDetect();
         }

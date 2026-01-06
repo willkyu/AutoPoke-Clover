@@ -48,8 +48,8 @@ public class APCore : MonoBehaviour
     private readonly Dictionary<DetectionClass, float> classThresholds =
         new Dictionary<DetectionClass, float>
     {
-    { DetectionClass.Dialogue, 0.6f },
-    { DetectionClass.BlankDialogue, 0.6f },
+    { DetectionClass.Dialogue, 0.5f },
+    { DetectionClass.BlankDialogue, 0.5f },
     { DetectionClass.RSE_s, 0.5f },
     { DetectionClass.RSE_ns, 0.5f },
     { DetectionClass.ShinyStar, 0.6f },
@@ -165,6 +165,12 @@ public class APCore : MonoBehaviour
     // ======= Detector 服务 =======
 
     public Detector GetDetector() => detector;
+
+    public void TestNotification()
+    {
+        ToastService.Test();
+        MailService.Test();
+    }
 
     // /// <summary>在需要时更换阈值、模型等（可选）。</summary>
     // public void ReinitDetector(Dictionary<DetectionClass, float> thresholds = null, ModelAsset model = null)

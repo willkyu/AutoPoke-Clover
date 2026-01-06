@@ -104,9 +104,8 @@ public class GiftCore : GeneralCore
         Press(GameKey.A); Wait(1000);
         while (DetectDialogue())
         {
-            if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
-            else Press(GameKey.B);
-            if (confirmFlag) Wait(1000);
+            if (confirmFlag && detectRes.Contains(DetectionClass.Options)) { Press(GameKey.A); confirmFlag = false; Wait(1000); }
+            else { Press(GameKey.B); Debug.Log("Pressed B."); }
         }
     }
 

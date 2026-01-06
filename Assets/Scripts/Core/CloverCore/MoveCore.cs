@@ -34,10 +34,15 @@ public class MoveCore : GeneralCore
                 // if (config.run) ctrl.KeyDown(GameKey.B);
                 RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
             }
-        else while (!DetectBlack()) { ctrl.KeyDown(GameKey.B, rand.Next(0, 10)); Wait(200); }
+        else
+        {
+            ctrl.KeyDown(GameKey.B); Debug.Log("KeyDown: B");
+            while (!DetectBlack()) { Wait(300); }
+            ctrl.KeyUp(GameKey.B);
+        }
         // else WaitTillBlack();
         // if (config.run || config.jump) ctrl.KeyUp(GameKey.B);
-        ReleaseAllKeys();
+        // ReleaseAllKeys();
         WaitTillNotBlack();
     }
     private void SweetScentEncounter()
