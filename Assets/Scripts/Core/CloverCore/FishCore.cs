@@ -16,8 +16,7 @@ public class FishCore : GeneralCore
     {
         while (!DetectBlack())
         {
-            Press(GameKey.Select);
-            while (Detect(DetectionClass.Dialogue)) Press(GameKey.A); Wait(200);
+            if (DetectDialogue()) Press(GameKey.A); else Press(GameKey.Select);
         }
         WaitTillNotBlack();
     }

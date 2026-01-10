@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -215,7 +216,7 @@ public class GeneralCore : TaskCore
     {
         Settings.Current.totalShiny++;
 
-        string imgPath = Win32Utils.SaveWindowScreenshot(hwnd);
+        string imgPath = Win32Utils.SaveWindowScreenshot(hwnd, owner.counter);
         if (Settings.Notification.sendToast) ToastService.NotifyShiny(owner.counter, imgPath);
         if (Settings.Notification.sendMail) MailService.SendMailShiny(owner.counter, imgPath);
     }
@@ -231,20 +232,55 @@ public class GeneralCore : TaskCore
 
     public void Exe()
     {
+        if (Settings.Obs.enabled) ObsService.EnsureConnectedAsync();
         if (config.function == Function.Move && config.repel) UseRepel();
         while (true)
         {
+            if (Settings.Obs.enabled) ObsService.StartRecordAsync();
             Encounter();
             AfterEncounter();
             if (ShinyDetect()) { ShinyHandle(); break; }
+            if (Settings.Obs.enabled) _ = StopRecord();
             AfterDetect();
         }
         APCore.I.ReturnWindow(this.hwnd);
+
+        Wait(2000); _ = StopRecord(delete: false);
     }
+
+
+
+    private async Task StopRecord(bool delete = true)
+    {
+        string path = await ObsService.StopRecordGetPathAsync();
+        UnityEngine.Debug.Log(System.IO.File.Exists(path));
+        UnityEngine.Debug.Log(path);
+
+        if (delete && System.IO.File.Exists(path))
+        {
+            while (!IsFileReady(path)) Wait(100);
+            System.IO.File.Delete(path);
+        }
+    }
+    private static bool IsFileReady(string path)
+    {
+        if (!System.IO.File.Exists(path)) return false;
+        try
+        {
+            using (var fs = System.IO.File.Open(path, System.IO.FileMode.Open,
+                System.IO.FileAccess.ReadWrite, System.IO.FileShare.None))
+            {
+                return true;
+            }
+        }
+        catch { return false; }
+    }
+
+
 
     public void End()
     {
-        repelFlag = false;
+        _ = StopRecord();
         ReleaseAllKeys();
     }
 

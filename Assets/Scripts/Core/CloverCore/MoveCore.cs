@@ -27,7 +27,7 @@ public class MoveCore : GeneralCore
                 if (callOrRepelDialogueFlag && config.run)
                 {
                     ctrl.KeyDown(GameKey.B);
-                    ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
+                    // ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
                     callOrRepelDialogueFlag = false;
                 }
                 if (config.repel && !repelFlag) UseRepel();

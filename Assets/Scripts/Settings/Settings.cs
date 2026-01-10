@@ -9,6 +9,7 @@ public class Configs
     public GeneralConfig general = new GeneralConfig();
     public KeyMappingConfig keyMapping = new KeyMappingConfig();
     public NotificationConfig notification = new NotificationConfig();
+    public ObsConfig obs = new ObsConfig();
     public int totalCount = 0;
     public int totalShiny = 0;
 }
@@ -31,6 +32,7 @@ public class Settings
     public static GeneralConfig General => Current.general;
     public static KeyMappingConfig Keys => Current.keyMapping;
     public static NotificationConfig Notification => Current.notification;
+    public static ObsConfig Obs => Current.obs;
 
     public static void LoadSettings()
     {

@@ -7,7 +7,8 @@ public class ConfigToggleRow : MonoBehaviour
     public enum ConfigScope
     {
         General,
-        Notification
+        Notification,
+        Obs
     }
 
     [Header("Binding")]
@@ -79,6 +80,7 @@ public class ConfigToggleRow : MonoBehaviour
             {
                 ConfigScope.General => Settings.General.Get(fieldName),
                 ConfigScope.Notification => Settings.Notification.Get(fieldName),
+                ConfigScope.Obs => Settings.Obs.Get(fieldName),
                 _ => "False"
             };
         }
@@ -100,6 +102,9 @@ public class ConfigToggleRow : MonoBehaviour
                     break;
                 case ConfigScope.Notification:
                     Settings.Notification.Set(fieldName, value);
+                    break;
+                case ConfigScope.Obs:
+                    Settings.Obs.Set(fieldName, value);
                     break;
             }
         }

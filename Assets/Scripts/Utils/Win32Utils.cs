@@ -249,7 +249,7 @@ public static class Win32Utils
     /// 截图并保存为 PNG。默认保存到“程序所在文件夹”，文件名包含时间戳。
     /// 返回完整保存路径。
     /// </summary>
-    public static string SaveWindowScreenshot(IntPtr hwnd, string folder = null, string filename = null)
+    public static string SaveWindowScreenshot(IntPtr hwnd, int count, string folder = null, string filename = null)
     {
         // 1) 目标保存文件夹
         string baseFolder = folder ?? GetProgramFolder();
@@ -258,7 +258,7 @@ public static class Win32Utils
 
         // 2) 文件名（改成 .bmp）
         string ts = System.DateTime.Now.ToString("yyyyMMdd(HHmmss)");
-        string name = string.IsNullOrEmpty(filename) ? $"{ts}.AutoPoke.bmp" :
+        string name = string.IsNullOrEmpty(filename) ? $"{ts}.{count}Times.AutoPoke.bmp" :
                     (filename.EndsWith(".bmp", System.StringComparison.OrdinalIgnoreCase) ? filename : filename + ".bmp");
         string fullpath = Path.Combine(baseFolder, name);
 

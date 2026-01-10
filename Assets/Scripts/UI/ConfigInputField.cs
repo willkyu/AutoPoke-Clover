@@ -6,7 +6,8 @@ public class ConfigInputField : MonoBehaviour
     public enum ConfigScope
     {
         General,
-        Notification
+        Notification,
+        Obs
     }
 
     [Header("Binding")]
@@ -85,6 +86,8 @@ public class ConfigInputField : MonoBehaviour
             {
                 ConfigScope.General => Settings.General.Get(fieldName),
                 ConfigScope.Notification => Settings.Notification.Get(fieldName),
+                ConfigScope.Obs => Settings.Obs.Get(fieldName),
+
                 _ => ""
             };
         }
@@ -106,6 +109,9 @@ public class ConfigInputField : MonoBehaviour
                     break;
                 case ConfigScope.Notification:
                     Settings.Notification.Set(fieldName, value);
+                    break;
+                case ConfigScope.Obs:
+                    Settings.Obs.Set(fieldName, value);
                     break;
             }
         }
