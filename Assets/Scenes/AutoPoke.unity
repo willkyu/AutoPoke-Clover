@@ -15452,7 +15452,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "\u8FD9\u662FAutoPoke: Clover\u7684Alpha\u6D4B\u8BD5\u7248\u672C\u3002
-    \n\u7248\u672C\u53F7v0.0.11.0_alpha(022826)\n\u5982\u679C\u9047\u5230bug\u8BF7\u53CD\u9988\uFF0C\u611F\u8C22\u6D4B\u8BD5\u3002"
+    \n\u7248\u672C\u53F7v0.0.11.1_alpha(022826)\n\u5982\u679C\u9047\u5230bug\u8BF7\u53CD\u9988\uFF0C\u611F\u8C22\u6D4B\u8BD5\u3002"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fa68ea92e6ed9c346afe54871f1d5b72, type: 2}
   m_sharedMaterial: {fileID: -3312382659647019473, guid: fa68ea92e6ed9c346afe54871f1d5b72, type: 2}

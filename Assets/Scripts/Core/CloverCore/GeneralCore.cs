@@ -158,7 +158,7 @@ public class GeneralCore : TaskCore
 
     }
 
-    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); } }
+    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(300); } }
 
     protected void Run()
     {
