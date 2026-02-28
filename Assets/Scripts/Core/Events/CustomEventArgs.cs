@@ -34,3 +34,8 @@ public class SetWinCountEventArgs : EventArgs
     // public Guid guid;
     public int winCount;
 }
+
+public class SetEasyConStateEventArgs : EventArgs
+{
+    public bool isConnected;
+}

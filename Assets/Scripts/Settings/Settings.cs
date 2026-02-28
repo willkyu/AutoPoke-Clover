@@ -12,6 +12,7 @@ public class Configs
     public ObsConfig obs = new ObsConfig();
     public int totalCount = 0;
     public int totalShiny = 0;
+    public bool ifNS = false;
 }
 
 public class Settings

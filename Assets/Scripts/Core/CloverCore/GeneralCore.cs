@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -51,7 +52,7 @@ public class GeneralCore : TaskCore
         this.owner = owner;
         this.config = config;
         detector = APCore.I.GetDetector();
-        ctrl = new ControlUtils(this.hwnd, config.speed);
+        ctrl = ControlUtilsFactory.GenerateControlUtils(this.hwnd, config);
     }
 
 
@@ -219,6 +220,11 @@ public class GeneralCore : TaskCore
         string imgPath = Win32Utils.SaveWindowScreenshot(hwnd, owner.counter);
         if (Settings.Notification.sendToast) ToastService.NotifyShiny(owner.counter, imgPath);
         if (Settings.Notification.sendMail) MailService.SendMailShiny(owner.counter, imgPath);
+        if (config.ifNS)
+        {
+            ControlUtilsNS temp = ctrl as ControlUtilsNS;
+            temp.Capture();
+        }
     }
 
     protected virtual void Encounter() { throw new System.NotImplementedException(); }
@@ -245,7 +251,7 @@ public class GeneralCore : TaskCore
         }
         APCore.I.ReturnWindow(this.hwnd);
 
-        Wait(2000); _ = StopRecord(delete: false);
+        if (Settings.Obs.enabled) { Wait(2000); _ = StopRecord(delete: false); }
     }
 
 

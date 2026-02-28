@@ -81,6 +81,86 @@ public static class Win32Utils
         return matching;
     }
 
+    public static List<IntPtr> FindDesktopChildWindowsWithTextObs(string titleSubstring)
+    {
+        List<IntPtr> matching = new List<IntPtr>(8);
+        if (string.IsNullOrEmpty(titleSubstring))
+            return matching;
+
+        string keyword = titleSubstring.Trim();
+        if (keyword.Length == 0)
+            return matching;
+
+        StringComparison comparison = StringComparison.OrdinalIgnoreCase;
+        StringBuilder titleBuffer = new StringBuilder(256);
+        StringBuilder classBuffer = new StringBuilder(128);
+        Dictionary<uint, string> processNameCache = new Dictionary<uint, string>(64);
+
+        EnumWindows((hWnd, lParam) =>
+        {
+            if (!IsMainWindow(hWnd))
+                return true;
+
+            int len = GetWindowTextLength(hWnd);
+            if (len > 0)
+            {
+                int requiredCapacity = len + 1;
+                if (titleBuffer.Capacity < requiredCapacity)
+                    titleBuffer.Capacity = requiredCapacity;
+
+                titleBuffer.Clear();
+                GetWindowText(hWnd, titleBuffer, requiredCapacity);
+                if (titleBuffer.ToString().IndexOf(keyword, comparison) >= 0)
+                {
+                    matching.Add(hWnd);
+                    return true;
+                }
+            }
+
+            classBuffer.Clear();
+            GetClassName(hWnd, classBuffer, classBuffer.Capacity);
+            if (classBuffer.Length > 0 && classBuffer.ToString().IndexOf(keyword, comparison) >= 0)
+            {
+                matching.Add(hWnd);
+                return true;
+            }
+
+            GetWindowThreadProcessId(hWnd, out uint pid);
+            if (pid == 0)
+                return true;
+
+            if (!processNameCache.TryGetValue(pid, out string processName))
+            {
+                try
+                {
+                    processName = System.Diagnostics.Process.GetProcessById((int)pid).ProcessName ?? string.Empty;
+                }
+                catch
+                {
+                    processName = string.Empty;
+                }
+                processNameCache[pid] = processName;
+            }
+
+            if (processName.IndexOf(keyword, comparison) >= 0)
+                matching.Add(hWnd);
+
+            return true;
+        }, IntPtr.Zero);
+
+        return matching;
+    }
+
+    private static bool IsMainWindow(IntPtr hWnd)
+    {
+        if (!IsWindowVisible(hWnd)) return false;
+        if (GetParent(hWnd) != IntPtr.Zero) return false;
+        if (GetWindow(hWnd, GW_OWNER) != IntPtr.Zero) return false;
+        if ((GetWindowLongPtrCompat(hWnd, GWL_STYLE).ToInt64() & WS_CHILD) != 0) return false;
+        if ((GetWindowLongPtrCompat(hWnd, GWL_EXSTYLE).ToInt64() & WS_EX_TOOLWINDOW) != 0) return false;
+        return true;
+    }
+
     // public static byte[] CaptureWindow(IntPtr hwnd, out int width, out int height)
     // {
     //     RECT rc = GetRealRect(hwnd);
@@ -340,9 +420,12 @@ public static class Win32Utils
     // ------------------ Win32 API ------------------
     [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
     [DllImport("user32.dll")] private static extern bool EnumChildWindows(IntPtr hWndParent, EnumWindowsProc lpEnumFunc, IntPtr lParam);
+    [DllImport("user32.dll")] private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
     [DllImport("user32.dll")] private static extern IntPtr GetDesktopWindow();
     [DllImport("user32.dll")] private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
     [DllImport("user32.dll")] private static extern int GetWindowTextLength(IntPtr hWnd);
+    [DllImport("user32.dll")] private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
     [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
     [DllImport("user32.dll")] private static extern IntPtr GetWindowDC(IntPtr hWnd);
     [DllImport("user32.dll")] private static extern IntPtr GetDC(IntPtr hWnd);
@@ -356,6 +439,9 @@ public static class Win32Utils
     [DllImport("gdi32.dll")] private static extern bool DeleteObject(IntPtr hObject);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hWnd);
     [DllImport("user32.dll")] private static extern IntPtr GetParent(IntPtr hWnd);
+    [DllImport("user32.dll")] private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+    [DllImport("user32.dll", EntryPoint = "GetWindowLong")] private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")] private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
     [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
     [DllImport("gdi32.dll")] private static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
     [DllImport("gdi32.dll")]
@@ -386,6 +472,11 @@ public static class Win32Utils
     }
 
     private const int SRCCOPY = 0x00CC0020;
+    private const uint GW_OWNER = 4;
+    private const int GWL_STYLE = -16;
+    private const int GWL_EXSTYLE = -20;
+    private const long WS_CHILD = 0x40000000L;
+    private const long WS_EX_TOOLWINDOW = 0x00000080L;
     private const uint WM_KEYDOWN = 0x0100;
     private const uint WM_KEYUP = 0x0101;
 
@@ -461,6 +552,14 @@ public static class Win32Utils
                 Debug.LogWarning($"⚠️ Unmapped KeyCode: {key}");
                 return 0; // 不支持的 key 返回 0，可能会被忽略
         }
+    }
+
+    private static IntPtr GetWindowLongPtrCompat(IntPtr hWnd, int nIndex)
+    {
+        if (IntPtr.Size == 8)
+            return GetWindowLongPtr64(hWnd, nIndex);
+
+        return new IntPtr(GetWindowLong32(hWnd, nIndex));
     }
 }
 

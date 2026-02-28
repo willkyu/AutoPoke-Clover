@@ -117,16 +117,26 @@ public class APCore : MonoBehaviour
 
 
 
-    // ======= 窗口管理 =======
+    // ======= 窗口与easycon管理 =======
 
     public void RefreshWindows()
     {
         allWindows.Clear();
-        allWindows.AddRange(Win32Utils.FindDesktopChildWindowsWithText(Settings.General.windowName));
+        // allWindows.AddRange(Win32Utils.FindDesktopChildWindowsWithText(Settings.General.windowName));
+        allWindows.AddRange(Win32Utils.FindDesktopChildWindowsWithTextObs(Settings.General.windowName));
+
+
+
         windowBusy.Clear();
         foreach (var h in allWindows) windowBusy[h] = false;
         Debug.Log($"[APCore] Found windows: {allWindows.Count}");
         this.TriggerEvent(EventName.SetWinCount, new SetWinCountEventArgs { winCount = allWindows.Count });
+    }
+    public void RefreshEasyCon()
+    {
+        EasyCon.Instance.ConnectAuto();
+        Debug.Log($"[APCore] Found EasyCon: {EasyCon.Instance.IsConnected}");
+        this.TriggerEvent(EventName.SetEasyConState, new SetEasyConStateEventArgs { isConnected = EasyCon.Instance.IsConnected });
     }
 
     /// <summary>租借一个空闲窗口；失败返回 IntPtr.Zero</summary>

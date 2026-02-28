@@ -19,6 +19,7 @@ public struct TaskParams
     public float speed;
     public int hitDuration;
     public int counter;
+    public bool ifNS;
 
     // Stationary
     public StationaryMode stationaryMode;
@@ -33,7 +34,7 @@ public struct TaskParams
 
     public TaskParams(
         Language lang, GameVersion gv, TaskMode mode, Function fn,
-        float spd, int hd, int cnt, StationaryMode sMode, bool r, bool j, bool ss, bool re, bool lr, int extra)
+        float spd, int hd, int cnt, bool ns, StationaryMode sMode, bool r, bool j, bool ss, bool re, bool lr, int extra)
     {
         language = lang;
         gameVersion = gv;
@@ -42,6 +43,7 @@ public struct TaskParams
         speed = spd;
         hitDuration = hd;
         counter = cnt;
+        ifNS = ns;
         stationaryMode = sMode;
         run = r;
         jump = j;
@@ -64,6 +66,7 @@ public class APTask : MonoBehaviour
     [Range(0.5f, 3f)] public float speed = 1f;
     public int hitDuration = 100;
     public int counter = 0;
+    // public bool ifNS = false;
 
     // Stationary
     public StationaryMode stationaryMode;
@@ -96,7 +99,7 @@ public class APTask : MonoBehaviour
 
     // ===== 参数快照 =====
     private TaskParams CurrentParams() =>
-        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, counter, stationaryMode, run, jump, sweetScent, repel, lr, extraData);
+        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, counter, Settings.Current.ifNS, stationaryMode, run, jump, sweetScent, repel, lr, extraData);
 
 
 
@@ -124,6 +127,11 @@ public class APTask : MonoBehaviour
             Debug.LogWarning("[APTask] No Specific Window Selected.");
             return;
         }
+        if (CurrentParams().ifNS && !EasyCon.Instance.IsConnected)
+        {
+            Debug.LogWarning("[APTask] No EasyCon Connected.");
+            return;
+        }
 
         // 参数快照
         var snapshot = CurrentParams();
@@ -137,7 +145,7 @@ public class APTask : MonoBehaviour
         // 每个窗口起一个线程
         foreach (var hwnd in wins)
         {
-            var ctrl = new ControlUtils(hwnd);
+            ControlUtils ctrl = ControlUtilsFactory.GenerateControlUtils(hwnd, CurrentParams());
 
             // 通过 CoreFactory 注入依赖，生成实现了 TaskCore 的实例
             TaskCore core = CoreFactory.GenerateCore(this, CurrentParams(), hwnd);

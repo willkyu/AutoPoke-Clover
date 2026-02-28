@@ -10,6 +10,8 @@ public static class EventName
     public const string SetRunning = nameof(SetRunning);
     public const string SetFPS = nameof(SetFPS);
     public const string SetWinCount = nameof(SetWinCount);
+    public const string SetEasyConState = nameof(SetEasyConState);
+
     public const string Refresh = nameof(Refresh);
 
 
