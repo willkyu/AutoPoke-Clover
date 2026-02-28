@@ -2,6 +2,8 @@
 
 New Version of [AutoPoke](https://github.com/willkyu/AutoPoke).
 
+交流群985084478
+
 
 ## TODO
 
