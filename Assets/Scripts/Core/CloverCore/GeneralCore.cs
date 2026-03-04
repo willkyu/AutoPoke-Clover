@@ -175,6 +175,7 @@ public class GeneralCore : TaskCore
 
     protected bool ShinyDetectInBattle(bool checkEnemy = true, bool SL = false)
     {
+        Wait(1500);
         if (checkEnemy)
         {
             while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;

@@ -135,6 +135,14 @@ public class APCore : MonoBehaviour
     public void RefreshEasyCon()
     {
         EasyCon.Instance.ConnectAuto();
+        if (EasyCon.Instance.IsConnected)
+        {
+            // 连续点击三次 LStick 以唤醒控制器（防止某些情况下第一次按键无响应）
+            for (int i = 0; i < 3; i++)
+            {
+                EasyCon.Instance.TapButton(EasyCon.NsButton.LStick);
+            }
+        }
         Debug.Log($"[APCore] Found EasyCon: {EasyCon.Instance.IsConnected}");
         this.TriggerEvent(EventName.SetEasyConState, new SetEasyConStateEventArgs { isConnected = EasyCon.Instance.IsConnected });
     }

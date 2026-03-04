@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO.Ports;
 using System.Threading;
+using EasyDevice;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -9,124 +9,72 @@ public sealed class EasyCon : MonoBehaviour
 {
     public enum NsButton
     {
-        A,
-        B,
-        X,
-        Y,
-        L,
-        R,
-        ZL,
-        ZR,
-        Plus,
-        Minus,
-        Home,
-        Capture,
-        Up,
-        Down,
-        Left,
-        Right,
-        LStick,
-        RStick
+        A, B, X, Y,
+        L, R, ZL, ZR,
+        Plus, Minus,
+        Home, Capture,
+        Up, Down, Left, Right,
+        LStick, RStick
+    }
+
+    private enum ConnStatus
+    {
+        Disconnected,
+        Connecting,
+        Connected,
+        Error
     }
 
     public static EasyCon Instance { get; private set; }
 
     [Header("Auto Connect")]
-    [SerializeField] private bool autoConnect = true;
+    // [SerializeField] private bool autoConnect = false;
     [SerializeField] private float scanIntervalSeconds = 0.5f;
     [SerializeField] private List<string> portCandidates = new List<string>();
     [SerializeField] private List<int> baudCandidates = new List<int> { 115200, 57600, 38400, 19200 };
 
-    [Header("Serial")]
-    [SerializeField] private int writeTimeoutMs = 10;
-    [SerializeField] private int readTimeoutMs = 10;
-    [SerializeField] private int connectWriteRetryWindowMs = 120;
-    [SerializeField] private int connectWriteRetryIntervalMs = 2;
+    [Header("EasyCon.Device options")]
+    [SerializeField] private bool openDelay = true;
+    [SerializeField] private int openDelayMs = 200;
+    [SerializeField] private bool cpuOpt = true;
+
+    [Header("Input")]
     [SerializeField] private int tapHoldMs = 20;
 
-    private static readonly byte[] ConnectHelloCmd = { 0xA5, 0xA5, 0x81 };
-    private const byte ConnectHelloReply = 0x80;
-    private const byte HatTop = 0x00;
-    private const byte HatTopRight = 0x01;
-    private const byte HatRight = 0x02;
-    private const byte HatBottomRight = 0x03;
-    private const byte HatBottom = 0x04;
-    private const byte HatBottomLeft = 0x05;
-    private const byte HatLeft = 0x06;
-    private const byte HatTopLeft = 0x07;
-    private const byte HatCenter = 0x08;
+    private readonly object _stateLock = new object();
 
-    private const byte DpadUpBit = 1 << 0;
-    private const byte DpadDownBit = 1 << 1;
-    private const byte DpadLeftBit = 1 << 2;
-    private const byte DpadRightBit = 1 << 3;
-    private static readonly byte[] DpadToHat =
-    {
-        HatCenter,      // 0000
-        HatTop,         // 0001 U
-        HatBottom,      // 0010 D
-        HatCenter,      // 0011 U+D
-        HatLeft,        // 0100 L
-        HatTopLeft,     // 0101 U+L
-        HatBottomLeft,  // 0110 D+L
-        HatLeft,        // 0111 U+D+L
-        HatRight,       // 1000 R
-        HatTopRight,    // 1001 U+R
-        HatBottomRight, // 1010 D+R
-        HatRight,       // 1011 U+D+R
-        HatCenter,      // 1100 L+R
-        HatTop,         // 1101 U+L+R
-        HatBottom,      // 1110 D+L+R
-        HatCenter       // 1111 U+D+L+R
-    };
-
-    private const ushort SwitchY = 0x0001;
-    private const ushort SwitchB = 0x0002;
-    private const ushort SwitchA = 0x0004;
-    private const ushort SwitchX = 0x0008;
-    private const ushort SwitchL = 0x0010;
-    private const ushort SwitchR = 0x0020;
-    private const ushort SwitchZL = 0x0040;
-    private const ushort SwitchZR = 0x0080;
-    private const ushort SwitchMinus = 0x0100;
-    private const ushort SwitchPlus = 0x0200;
-    private const ushort SwitchLClick = 0x0400;
-    private const ushort SwitchRClick = 0x0800;
-    private const ushort SwitchHome = 0x1000;
-    private const ushort SwitchCapture = 0x2000;
-    private static readonly ushort[] ButtonMasks =
-    {
-        SwitchA,       // A
-        SwitchB,       // B
-        SwitchX,       // X
-        SwitchY,       // Y
-        SwitchL,       // L
-        SwitchR,       // R
-        SwitchZL,      // ZL
-        SwitchZR,      // ZR
-        SwitchPlus,    // Plus
-        SwitchMinus,   // Minus
-        SwitchHome,    // Home
-        SwitchCapture, // Capture
-        0,             // Up
-        0,             // Down
-        0,             // Left
-        0,             // Right
-        SwitchLClick,  // LStick
-        SwitchRClick   // RStick
-    };
-
-    private SerialPort _serial;
+    private NintendoSwitch _device;
+    private ConnStatus _status = ConnStatus.Disconnected;
     private float _nextScanTime;
-    private long _connectWriteRetryUntilMs;
-    private ushort _buttonState;
-    private byte _dpadState;
-    private byte _hatState = HatCenter;
-    private readonly byte[] _reportPacket = new byte[8];
+    private string _connectedPort = string.Empty;
+    private int _connectedBaud;
 
-    public bool IsConnected => _serial != null && _serial.IsOpen;
-    public string ConnectedPort => IsConnected ? _serial.PortName : string.Empty;
-    public int ConnectedBaud => IsConnected ? _serial.BaudRate : 0;
+    public bool IsConnected
+    {
+        get
+        {
+            lock (_stateLock)
+                return _device != null && _device.IsConnected();
+        }
+    }
+
+    public string ConnectedPort
+    {
+        get
+        {
+            lock (_stateLock)
+                return IsConnected ? _connectedPort : string.Empty;
+        }
+    }
+
+    public int ConnectedBaud
+    {
+        get
+        {
+            lock (_stateLock)
+                return IsConnected ? _connectedBaud : 0;
+        }
+    }
 
     private void Awake()
     {
@@ -135,7 +83,6 @@ public sealed class EasyCon : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -148,21 +95,20 @@ public sealed class EasyCon : MonoBehaviour
     {
         if (IsConnected)
         {
-            if (!IsPortStillPresent(_serial.PortName))
-            {
+            var port = ConnectedPort;
+            if (!string.IsNullOrEmpty(port) && !IsPortStillPresent(port))
                 Disconnect();
-            }
-
             return;
         }
 
-        if (!autoConnect || Time.unscaledTime < _nextScanTime)
-        {
-            return;
-        }
+        // if (!autoConnect)
+        //     return;
 
-        _nextScanTime = Time.unscaledTime + Mathf.Max(0.1f, scanIntervalSeconds);
-        ConnectAuto();
+        // if (Time.unscaledTime < _nextScanTime)
+        //     return;
+
+        // _nextScanTime = Time.unscaledTime + Mathf.Max(0.1f, scanIntervalSeconds);
+        // ConnectAuto();
     }
 
     private void OnDisable()
@@ -173,43 +119,24 @@ public sealed class EasyCon : MonoBehaviour
     private void OnDestroy()
     {
         Disconnect();
-
-        if (Instance == this)
-        {
-            Instance = null;
-        }
+        if (Instance == this) Instance = null;
     }
 
     public bool ConnectAuto()
     {
-        if (IsConnected)
-        {
-            return true;
-        }
+        if (IsConnected) return true;
 
-        var ports = SerialPort.GetPortNames();
-        if (ports == null || ports.Length == 0)
-        {
-            return false;
-        }
+        var ports = ECDevice.GetPortNames();
+        if (ports == null || ports.Count == 0) return false;
 
         var orderedPorts = BuildOrderedPortList(ports);
-        for (var i = 0; i < orderedPorts.Count; i++)
+
+        foreach (var port in orderedPorts)
         {
-            var port = orderedPorts[i];
-            for (var j = 0; j < baudCandidates.Count; j++)
+            foreach (var baud in baudCandidates)
             {
-                if (!TryConnect(port, baudCandidates[j]))
-                {
-                    continue;
-                }
-
-                if (TryHandshakeHello())
-                {
+                if (Connect(port, baud))
                     return true;
-                }
-
-                Disconnect();
             }
         }
 
@@ -218,281 +145,141 @@ public sealed class EasyCon : MonoBehaviour
 
     public bool Connect(string portName, int baudRate)
     {
-        if (IsConnected)
+        if (string.IsNullOrWhiteSpace(portName))
+            return false;
+
+        lock (_stateLock)
         {
-            if (string.Equals(_serial.PortName, portName, StringComparison.OrdinalIgnoreCase) && _serial.BaudRate == baudRate)
+            if (_device != null)
             {
+                if (_device.IsConnected() && string.Equals(_connectedPort, portName, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                _device.Disconnect();
+                _device = null;
+            }
+
+            _status = ConnStatus.Connecting;
+
+            var dev = new NintendoSwitch();
+            dev.SetCpuOpt(cpuOpt);
+            dev.SetOpenDelay(openDelay);
+
+            var result = dev.TryConnect(portName);
+            if (result == NintendoSwitch.ConnectResult.Success)
+            {
+                _device = dev;
+                _status = ConnStatus.Connected;
+                _connectedPort = portName;
+                _connectedBaud = baudRate;
                 return true;
             }
 
-            Disconnect();
+            _status = ConnStatus.Error;
+            _connectedPort = string.Empty;
+            _connectedBaud = 0;
+            dev.Disconnect();
+            return false;
         }
-
-        return TryConnect(portName, baudRate);
     }
 
     public void Disconnect()
     {
-        if (_serial == null)
+        lock (_stateLock)
         {
-            return;
-        }
-
-        try
-        {
-            if (_serial.IsOpen)
+            if (_device != null)
             {
-                _serial.Close();
+                _device.Disconnect();
+                _device = null;
             }
-        }
-        catch
-        {
-            // Ignore close failures; the port may already be gone.
-        }
-        finally
-        {
-            _serial.Dispose();
-            _serial = null;
+
+            _status = ConnStatus.Disconnected;
+            _connectedPort = string.Empty;
+            _connectedBaud = 0;
         }
     }
 
-    public bool SendButtonDown(NsButton button)
-    {
-        return ApplyButtonState(button, true);
-    }
-
-    public bool SendButtonUp(NsButton button)
-    {
-        return ApplyButtonState(button, false);
-    }
-
-    public bool SendButton(NsButton button, bool pressed)
-    {
-        return pressed ? SendButtonDown(button) : SendButtonUp(button);
-    }
+    public bool SendButtonDown(NsButton button) => ApplyButton(button, true);
+    public bool SendButtonUp(NsButton button) => ApplyButton(button, false);
+    public bool SendButton(NsButton button, bool pressed) => pressed ? SendButtonDown(button) : SendButtonUp(button);
 
     public bool TapButton(NsButton button)
     {
-        if (!SendButtonDown(button))
-        {
-            return false;
-        }
+        if (!SendButtonDown(button)) return false;
 
         var holdMs = Math.Max(0, tapHoldMs);
-        if (holdMs > 0)
-        {
-            Thread.Sleep(holdMs);
-        }
+        if (holdMs > 0) Thread.Sleep(holdMs);
 
         return SendButtonUp(button);
     }
 
-    private bool TryConnect(string portName, int baudRate)
+    private bool ApplyButton(NsButton button, bool down)
     {
-        SerialPort trial = null;
-        try
+        NintendoSwitch dev;
+        lock (_stateLock)
         {
-            trial = new SerialPort(portName, baudRate)
-            {
-                DtrEnable = true,
-                RtsEnable = true,
-                ReadTimeout = readTimeoutMs,
-                WriteTimeout = writeTimeoutMs,
-                NewLine = "\n"
-            };
-
-            trial.Open();
-            _serial = trial;
-            _connectWriteRetryUntilMs = Environment.TickCount + Math.Max(0, connectWriteRetryWindowMs);
-            return true;
+            dev = _device;
         }
-        catch
-        {
-            if (trial != null)
-            {
-                try
-                {
-                    if (trial.IsOpen)
-                    {
-                        trial.Close();
-                    }
-                }
-                catch
-                {
-                    // Ignore failures while cleaning up unsuccessful open.
-                }
 
-                trial.Dispose();
-            }
-
+        if (dev == null || !dev.IsConnected())
             return false;
-        }
-    }
-
-    private bool SendRaw(byte[] data)
-    {
-        if (!IsConnected)
-        {
-            return false;
-        }
-
-        var retryInterval = Math.Max(0, connectWriteRetryIntervalMs);
-        while (true)
-        {
-            try
-            {
-                _serial.Write(data, 0, data.Length);
-                return true;
-            }
-            catch (TimeoutException)
-            {
-                if (Environment.TickCount > _connectWriteRetryUntilMs)
-                {
-                    Disconnect();
-                    return false;
-                }
-
-                if (retryInterval > 0)
-                {
-                    Thread.Sleep(retryInterval);
-                }
-            }
-            catch
-            {
-                Disconnect();
-                return false;
-            }
-        }
-    }
-
-    private bool TryHandshakeHello()
-    {
-        if (!IsConnected)
-        {
-            return false;
-        }
-
-        try
-        {
-            _serial.DiscardInBuffer();
-            _serial.DiscardOutBuffer();
-            _serial.Write(ConnectHelloCmd, 0, ConnectHelloCmd.Length);
-
-            var reply = _serial.ReadByte();
-            return reply == ConnectHelloReply;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private bool ApplyButtonState(NsButton button, bool pressed)
-    {
-        var mask = ToSwitchMask(button);
-        if (mask != 0)
-        {
-            if (pressed)
-            {
-                _buttonState |= mask;
-            }
-            else
-            {
-                _buttonState = (ushort)(_buttonState & ~mask);
-            }
-
-            return SendCurrentReport();
-        }
 
         switch (button)
         {
             case NsButton.Up:
-                SetDpadBit(DpadUpBit, pressed);
-                break;
+                dev.HatDirection(DirectionKey.Up, down);
+                return true;
             case NsButton.Down:
-                SetDpadBit(DpadDownBit, pressed);
-                break;
+                dev.HatDirection(DirectionKey.Down, down);
+                return true;
             case NsButton.Left:
-                SetDpadBit(DpadLeftBit, pressed);
-                break;
+                dev.HatDirection(DirectionKey.Left, down);
+                return true;
             case NsButton.Right:
-                SetDpadBit(DpadRightBit, pressed);
-                break;
+                dev.HatDirection(DirectionKey.Right, down);
+                return true;
             default:
-                return false;
+                var key = ToECKey(button);
+                if (key == null)
+                    return false;
+                if (down) dev.Down(key);
+                else dev.Up(key);
+                return true;
         }
-
-        _hatState = ComputeHat(_dpadState);
-        return SendCurrentReport();
     }
 
-    private void SetDpadBit(byte bit, bool pressed)
+    private static ECKey ToECKey(NsButton button)
     {
-        if (pressed)
+        switch (button)
         {
-            _dpadState |= bit;
+            case NsButton.A: return ECKeyUtil.Button(SwitchButton.A);
+            case NsButton.B: return ECKeyUtil.Button(SwitchButton.B);
+            case NsButton.X: return ECKeyUtil.Button(SwitchButton.X);
+            case NsButton.Y: return ECKeyUtil.Button(SwitchButton.Y);
+            case NsButton.L: return ECKeyUtil.Button(SwitchButton.L);
+            case NsButton.R: return ECKeyUtil.Button(SwitchButton.R);
+            case NsButton.ZL: return ECKeyUtil.Button(SwitchButton.ZL);
+            case NsButton.ZR: return ECKeyUtil.Button(SwitchButton.ZR);
+            case NsButton.Plus: return ECKeyUtil.Button(SwitchButton.PLUS);
+            case NsButton.Minus: return ECKeyUtil.Button(SwitchButton.MINUS);
+            case NsButton.Home: return ECKeyUtil.Button(SwitchButton.HOME);
+            case NsButton.Capture: return ECKeyUtil.Button(SwitchButton.CAPTURE);
+            case NsButton.LStick: return ECKeyUtil.Button(SwitchButton.LCLICK);
+            case NsButton.RStick: return ECKeyUtil.Button(SwitchButton.RCLICK);
+            default: return null;
         }
-        else
-        {
-            _dpadState = (byte)(_dpadState & ~bit);
-        }
     }
 
-    private bool SendCurrentReport()
+    private List<string> BuildOrderedPortList(List<string> detected)
     {
-        const byte stickCenter = 128;
-        PackReport(_buttonState, _hatState, stickCenter, stickCenter, stickCenter, stickCenter, _reportPacket);
-        return SendRaw(_reportPacket);
-    }
-
-    private static ushort ToSwitchMask(NsButton button)
-    {
-        var index = (int)button;
-        if ((uint)index < (uint)ButtonMasks.Length)
-        {
-            return ButtonMasks[index];
-        }
-
-        return 0;
-    }
-
-    private static byte ComputeHat(byte dpadState)
-    {
-        return DpadToHat[dpadState & 0x0F];
-    }
-
-    private static void PackReport(ushort buttons, byte hat, byte lx, byte ly, byte rx, byte ry, byte[] output)
-    {
-        var payload = ((ulong)buttons << 40) |
-                      ((ulong)hat << 32) |
-                      ((ulong)lx << 24) |
-                      ((ulong)ly << 16) |
-                      ((ulong)rx << 8) |
-                      ry;
-
-        for (var i = 0; i < 8; i++)
-        {
-            var shift = 49 - (i * 7);
-            output[i] = (byte)((payload >> shift) & 0x7F);
-        }
-
-        output[7] |= 0x80;
-    }
-
-    private List<string> BuildOrderedPortList(string[] detected)
-    {
-        var result = new List<string>(detected.Length);
+        var result = new List<string>(detected.Count);
         var known = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         for (var i = 0; i < portCandidates.Count; i++)
         {
             var candidate = portCandidates[i];
-            if (string.IsNullOrWhiteSpace(candidate))
-            {
-                continue;
-            }
+            if (string.IsNullOrWhiteSpace(candidate)) continue;
 
-            for (var j = 0; j < detected.Length; j++)
+            for (var j = 0; j < detected.Count; j++)
             {
                 var port = detected[j];
                 if (!known.Contains(port) && string.Equals(port, candidate, StringComparison.OrdinalIgnoreCase))
@@ -504,13 +291,11 @@ public sealed class EasyCon : MonoBehaviour
             }
         }
 
-        for (var i = 0; i < detected.Length; i++)
+        for (var i = 0; i < detected.Count; i++)
         {
             var port = detected[i];
             if (known.Add(port))
-            {
                 result.Add(port);
-            }
         }
 
         return result;
@@ -518,13 +303,11 @@ public sealed class EasyCon : MonoBehaviour
 
     private static bool IsPortStillPresent(string portName)
     {
-        var ports = SerialPort.GetPortNames();
-        for (var i = 0; i < ports.Length; i++)
+        var ports = ECDevice.GetPortNames();
+        for (var i = 0; i < ports.Count; i++)
         {
             if (string.Equals(ports[i], portName, StringComparison.OrdinalIgnoreCase))
-            {
                 return true;
-            }
         }
 
         return false;

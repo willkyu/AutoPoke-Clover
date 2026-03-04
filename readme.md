@@ -2,13 +2,13 @@
 
 宝可梦三代自动化刷闪工具，支持GB Operator、GBA模拟器、NS端火红叶绿。
 
-> 交流群985084478
+> 交流QQ群985084478
 
 ## 支持的内容
 
 注意，点击窗口下面的版本（一开始应该是RS）切换到对应版本。
 
-- 初始御三家，使用Stationary中的RSEStarters或FrLgStarters
+- 初始御三家，使用Stationary中的RSEStarters（宝石）或FrLgStarters（火叶）
 - 各种简单定点，如卡比兽、超梦等，一般使用Stationary中的NormalHitA（一直按A直到进入战斗）（可选择是否指定方向移动一格，用于宝石的封面神等）
 - 各种路闪，支持自动续喷雾（可能有bug），甜甜香气等。使用Move
 - 各种礼物宝可梦，如伊布、买的鲤鱼王，使用Stationary中的Gift

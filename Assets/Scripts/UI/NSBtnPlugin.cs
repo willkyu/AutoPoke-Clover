@@ -46,7 +46,10 @@ public class NSBtnPlugin : MonoBehaviour
     {
         Settings.Current.ifNS = !Settings.Current.ifNS;
         Settings.SaveSettings();
-        APCore.I.RefreshEasyCon();
+        if (Settings.Current.ifNS)
+            APCore.I.RefreshEasyCon();
+        else
+            EasyCon.Instance?.Disconnect();
         UpdateVisual();
     }
 
