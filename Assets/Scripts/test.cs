@@ -59,7 +59,7 @@ namespace test
             // detectorTester = GetComponent<SentisTester>();
             detector = Detector.Init(initSize: 1, maxSize: 2, modelAsset: modelAsset, classThresholds: classThresholds);
 
-            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithTextObs("Playback");
+            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithTextObs("PotPlayer");
             if (windows.Count == 0)
             {
                 Debug.LogWarning("❌ 未找到目标窗口");

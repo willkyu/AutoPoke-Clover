@@ -16,24 +16,27 @@ public class MoveCore : GeneralCore
         // ReleaseAllKeys();
         if (config.run) ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
 
-        if (!config.jump) while (!DetectBlack())
+        if (!config.jump) while (true)
+        {
+            if (DetectBlack()) break;
+
+            if (Detect(DetectionClass.Dialogue))
             {
-                while (DetectDialogue())
-                {
-                    // Wait(300); if (!DetectDialogue()) break;
-                    // Press(GameKey.B); Wait(300); repelFlag = false;
-                    Wait(1000); Press(GameKey.B); repelFlag = false; callOrRepelDialogueFlag = true;
-                }
-                if (callOrRepelDialogueFlag && config.run)
-                {
-                    ctrl.KeyDown(GameKey.B);
-                    // ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
-                    callOrRepelDialogueFlag = false;
-                }
-                if (config.repel && !repelFlag) UseRepel();
-                // if (config.run) ctrl.KeyDown(GameKey.B);
-                RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
+                // Wait(300); if (!DetectDialogue()) break;
+                // Press(GameKey.B); Wait(300); repelFlag = false;
+                Press(GameKey.B); repelFlag = false; callOrRepelDialogueFlag = true;
+                continue;
             }
+            if (callOrRepelDialogueFlag && config.run)
+            {
+                ctrl.KeyDown(GameKey.B);
+                // ctrl.KeyDown(GameKey.B, rand.Next(0, 10));
+                callOrRepelDialogueFlag = false;
+            }
+            if (config.repel && !repelFlag) UseRepel();
+            // if (config.run) ctrl.KeyDown(GameKey.B);
+            RandomPress(config.ifLR ? LeftRightKeys : UpDownKeys);
+        }
         else
         {
             ctrl.KeyDown(GameKey.B); Debug.Log("KeyDown: B");

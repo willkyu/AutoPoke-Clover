@@ -48,7 +48,7 @@ public class GeneralCore : TaskCore
     };
     protected GameKey[] RandomKeys = new GameKey[]
     {
-        GameKey.Left,GameKey.Right, GameKey.Up,GameKey.Down, GameKey.Start, GameKey.Select
+        GameKey.Left,GameKey.Right, GameKey.Up,GameKey.Down, GameKey.Select
     };
 
     public GeneralCore(IntPtr hwnd, APTask owner, TaskParams config)
@@ -99,6 +99,7 @@ public class GeneralCore : TaskCore
         {
             elapsedMs = 1000 / fixedFPS - elapsedMs;
             Wait((int)elapsedMs);
+            UnityEngine.Debug.Log($"Waited extra {elapsedMs} ms to maintain fixed FPS of {fixedFPS}.");
         }
         // 计算 FPS
         fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
@@ -125,8 +126,8 @@ public class GeneralCore : TaskCore
                 Wait(rand.Next(0, 500));
                 if (Detect(DetectionClass.BeforeEnter)) break;
                 Press(GameKey.A);
+                if (lowEffency) Wait(3200);
                 if (Detect(DetectionClass.BeforeEnter)) break;
-                if (lowEffency) Wait(2000);
             }
             else
             {
@@ -164,7 +165,14 @@ public class GeneralCore : TaskCore
 
     }
 
-    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(300); if (lowEffency) Wait(1000); } }
+    protected void OpenMenu()
+    {
+        while (!Detect(DetectionClass.Options))
+        {
+            if (detectRes.Contains(DetectionClass.Dialogue)) Press(GameKey.B);//in case stuck in dialogue
+            Press(GameKey.Start); Wait(300); if (lowEffency) Wait(1000);
+        }
+    }
 
     protected void Run()
     {

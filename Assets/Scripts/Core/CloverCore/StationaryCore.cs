@@ -12,7 +12,7 @@ public class FrLgStartersCore : GeneralCore
         while (!Detect(DetectionClass.Options)) { Press(GameKey.A); Wait(1000); if (lowEffency) Wait(1000); } // Make sure the whole text appears.
         // Press(GameKey.A); Wait(1000);
         while (Detect(DetectionClass.Options)) { Press(GameKey.A); if (lowEffency) Wait(1000); }
-        while (DetectDialogue()) Press(GameKey.B);
+        while (DetectDialogue()) { Press(GameKey.B, wait: false); }
         Debug.Log("no dialogue");
         while (!DetectDialogue()) Wait(500);
         Debug.Log("last dialogue");
