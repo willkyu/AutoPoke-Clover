@@ -9,9 +9,9 @@ public class FrLgStartersCore : GeneralCore
     protected override void Encounter()
     {
         Debug.Log("start");
-        while (!Detect(DetectionClass.Options)) { Press(GameKey.A); Wait(1000); } // Make sure the whole text appears.
+        while (!Detect(DetectionClass.Options)) { Press(GameKey.A); Wait(1000); if (lowEffency) Wait(1000); } // Make sure the whole text appears.
         // Press(GameKey.A); Wait(1000);
-        while (Detect(DetectionClass.Options)) { Press(GameKey.A); }
+        while (Detect(DetectionClass.Options)) { Press(GameKey.A); if (lowEffency) Wait(1000); }
         while (DetectDialogue()) Press(GameKey.B);
         Debug.Log("no dialogue");
         while (!DetectDialogue()) Wait(500);
@@ -105,7 +105,12 @@ public class GiftCore : GeneralCore
         while (DetectDialogue())
         {
             if (confirmFlag && detectRes.Contains(DetectionClass.Options)) { Press(GameKey.A); confirmFlag = false; Wait(1000); }
-            else { Press(GameKey.B); Debug.Log("Pressed B."); }
+            else
+            {
+                Press(GameKey.B); Debug.Log("Pressed B.");
+                if (lowEffency) Wait(1500);
+                // Wait(2000); // the wait is to prevent the delay for video capture cards.
+            }
         }
     }
 

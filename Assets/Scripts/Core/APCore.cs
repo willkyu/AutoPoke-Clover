@@ -53,7 +53,7 @@ public class APCore : MonoBehaviour
     { DetectionClass.RSE_s, 0.5f },
     { DetectionClass.RSE_ns, 0.5f },
     { DetectionClass.ShinyStar, 0.6f },
-    { DetectionClass.Next, 0.25f },
+    { DetectionClass.Next, 0.35f },
     { DetectionClass.CanRun, 0.5f },
     { DetectionClass.FrLg_s, 0.5f },
     { DetectionClass.FrLg_ns, 0.5f },
@@ -137,11 +137,7 @@ public class APCore : MonoBehaviour
         EasyCon.Instance.ConnectAuto();
         if (EasyCon.Instance.IsConnected)
         {
-            // 连续点击三次 LStick 以唤醒控制器（防止某些情况下第一次按键无响应）
-            for (int i = 0; i < 3; i++)
-            {
-                EasyCon.Instance.TapButton(EasyCon.NsButton.LStick);
-            }
+            EasyCon.Instance.RefreshController();
         }
         Debug.Log($"[APCore] Found EasyCon: {EasyCon.Instance.IsConnected}");
         this.TriggerEvent(EventName.SetEasyConState, new SetEasyConStateEventArgs { isConnected = EasyCon.Instance.IsConnected });

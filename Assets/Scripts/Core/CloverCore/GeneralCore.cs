@@ -27,6 +27,11 @@ public class GeneralCore : TaskCore
     protected int detectTimeMS;
     protected bool repelFlag = false;
     protected bool callOrRepelDialogueFlag = false;
+    protected double fps = 0.0;
+    protected bool lowEffency
+    {
+        get { return fps < 12; }
+    }
 
     // ------------------ Key Arrays ------------------
     protected GameKey[] SoftResetKeys = new GameKey[]
@@ -96,7 +101,7 @@ public class GeneralCore : TaskCore
             Wait((int)elapsedMs);
         }
         // 计算 FPS
-        double fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
+        fps = elapsedMs > 0 ? 1000.0 / elapsedMs : 0.0;
         this.TriggerEvent(EventName.SetFPS, new SetFPSEventArgs { fps = fps });
         return detectRes.Contains(targetClass);
     }
@@ -121,6 +126,7 @@ public class GeneralCore : TaskCore
                 if (Detect(DetectionClass.BeforeEnter)) break;
                 Press(GameKey.A);
                 if (Detect(DetectionClass.BeforeEnter)) break;
+                if (lowEffency) Wait(2000);
             }
             else
             {
@@ -158,7 +164,7 @@ public class GeneralCore : TaskCore
 
     }
 
-    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(300); } }
+    protected void OpenMenu() { while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(300); if (lowEffency) Wait(1000); } }
 
     protected void Run()
     {
@@ -175,10 +181,11 @@ public class GeneralCore : TaskCore
 
     protected bool ShinyDetectInBattle(bool checkEnemy = true, bool SL = false)
     {
-        Wait(1500);
+        Wait(500);
         if (checkEnemy)
         {
             while (!Detect(DetectionClass.Next)) if (detectRes.Contains(DetectionClass.ShinyStar)) return true;
+            UnityEngine.Debug.Log("Not shiny.");
             if (!SL)
             {
                 Press(GameKey.A);
@@ -239,6 +246,7 @@ public class GeneralCore : TaskCore
 
     public void Exe()
     {
+        if (config.ifNS) EasyCon.Instance.RefreshController();
         if (Settings.Obs.enabled) ObsService.EnsureConnectedAsync();
         if (config.function == Function.Move && config.repel) UseRepel();
         while (true)

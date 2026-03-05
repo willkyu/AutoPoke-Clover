@@ -202,6 +202,15 @@ public sealed class EasyCon : MonoBehaviour
     public bool SendButtonUp(NsButton button) => ApplyButton(button, false);
     public bool SendButton(NsButton button, bool pressed) => pressed ? SendButtonDown(button) : SendButtonUp(button);
 
+    public void RefreshController()
+    {
+        // 连续点击三次 LStick 以唤醒控制器（防止某些情况下第一次按键无响应）
+        for (int i = 0; i < 3; i++)
+        {
+            TapButton(NsButton.LStick);
+        }
+    }
+
     public bool TapButton(NsButton button)
     {
         if (!SendButtonDown(button)) return false;

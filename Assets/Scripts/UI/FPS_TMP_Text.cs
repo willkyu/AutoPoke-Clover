@@ -28,6 +28,9 @@ public class FPS_TMP_Text : MonoBehaviour
         MainThreadDispatcher.Enqueue(() =>
             {
                 label.text = $"FPS: {val.fps:F1}";
+                if (val.fps < 12) label.color = Color.red;
+                else if (val.fps < 30) label.color = Color.yellow;
+                else label.color = Color.green;
             });
     }
 }
