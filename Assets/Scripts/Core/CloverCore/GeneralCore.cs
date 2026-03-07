@@ -48,7 +48,7 @@ public class GeneralCore : TaskCore
     };
     protected GameKey[] RandomKeys = new GameKey[]
     {
-        GameKey.Left,GameKey.Right, GameKey.Up,GameKey.Down, GameKey.Select
+        GameKey.Left,GameKey.Right, GameKey.Up, GameKey.Select
     };
 
     public GeneralCore(IntPtr hwnd, APTask owner, TaskParams config)
