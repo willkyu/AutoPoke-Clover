@@ -112,7 +112,7 @@ public class GeneralCore : TaskCore
     }
     protected bool DetectDialogue() { return Detect(DetectionClass.Dialogue) || detectRes.Contains(DetectionClass.BlankDialogue); }
     protected void WaitTillBlack(bool pressA = false, bool wait = true) { while (!DetectBlack()) { if (pressA) Press(GameKey.A, wait: wait); else if (wait) Wait(200); } }
-    protected void WaitTillNotBlack() { while (DetectBlack()) Wait(200); Wait(300); }
+    protected void WaitTillNotBlack(bool wait = true) { while (DetectBlack()) if (wait) Wait(200); Wait(300); }
     protected void SoftReset()
     {
         ctrl.KeysHit(SoftResetKeys);
@@ -122,24 +122,24 @@ public class GeneralCore : TaskCore
             if (config.gameVersion == GameVersion.FrLg)
             {
                 Press(RandomKeys[rand.Next(0, RandomKeys.Length)], wait: false);
-                if (Detect(DetectionClass.BeforeEnter)) break; // Better robustness
+                // if (Detect(DetectionClass.BeforeEnter)) break; // Better robustness
                 Wait(rand.Next(0, 500));
-                if (Detect(DetectionClass.BeforeEnter)) break;
-                Press(GameKey.A);
-                if (lowEffency) Wait(3200);
-                if (Detect(DetectionClass.BeforeEnter)) break;
+                // if (Detect(DetectionClass.BeforeEnter)) break;
+                Press(GameKey.Start);
+                // if (lowEffency) Wait(3200);
+                // if (Detect(DetectionClass.BeforeEnter)) break;
             }
             else
             {
-                Press(GameKey.A);
-                if (Detect(DetectionClass.BeforeEnter)) break;
+                Press(GameKey.Start);
+                // if (Detect(DetectionClass.BeforeEnter)) break;
                 Wait(200);
-                if (Detect(DetectionClass.BeforeEnter)) break;
+                // if (Detect(DetectionClass.BeforeEnter)) break;
             }
         }
         // Press(GameKey.A);
-        WaitTillBlack(pressA: true);
-        WaitTillNotBlack();
+        WaitTillBlack(pressA: true, wait: false);
+        WaitTillNotBlack(wait: false);
         if (config.gameVersion == GameVersion.FrLg)
         {
             Press(GameKey.B);

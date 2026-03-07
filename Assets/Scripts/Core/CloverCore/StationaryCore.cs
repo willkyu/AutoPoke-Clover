@@ -35,16 +35,6 @@ public class FrLgStartersCore : GeneralCore
         // while (DetectDialogue()) Press(GameKey.B);
         // Debug.Log("end");
 
-        // bool confirmFlag = true;
-        // Press(GameKey.A); Wait(1000);
-        // while (DetectDialogue())
-        // {
-        //     if (detectRes.Contains(DetectionClass.Options) && confirmFlag) { Press(GameKey.A); confirmFlag = false; }
-        //     else Press(GameKey.B);
-        //     if (confirmFlag) Wait(1000);
-        // }
-        // while (!DetectDialogue()) Wait(500);
-        // while (DetectDialogue()) Press(GameKey.A);
     }
 
     protected override bool ShinyDetect()
