@@ -7,7 +7,7 @@ public enum Language { Jpn, Eng }
 public enum GameVersion { RS, E, FrLg }
 public enum TaskMode { Single, Multiple }
 public enum Function { Move, Stationary, Fish }
-public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA, Gift, Mew }
+public enum StationaryMode { FrLgStarters, RSEStarters, NormalHitA, Gift, Mew, Coin }
 
 [Serializable]
 public struct TaskParams
@@ -30,11 +30,13 @@ public struct TaskParams
     public bool repel;
     public bool ifLR;
     // Extra
-    public int extraData;
+    public int extraData0;
+    public int extraData1;
+
 
     public TaskParams(
         Language lang, GameVersion gv, TaskMode mode, Function fn,
-        float spd, int hd, int cnt, bool ns, StationaryMode sMode, bool r, bool j, bool ss, bool re, bool lr, int extra)
+        float spd, int hd, int cnt, bool ns, StationaryMode sMode, bool r, bool j, bool ss, bool re, bool lr, int extra0, int extra1)
     {
         language = lang;
         gameVersion = gv;
@@ -50,7 +52,8 @@ public struct TaskParams
         sweetScent = ss;
         repel = re;
         ifLR = lr;
-        extraData = extra;
+        extraData0 = extra0;
+        extraData1 = extra1;
     }
 }
 
@@ -77,7 +80,8 @@ public class APTask : MonoBehaviour
     public bool repel = false;
     public bool lr = true;
     // Extra
-    public int extraData = 0;
+    public int extraData0 = 0;
+    public int extraData1 = 0;
 
     [Header("状态只读")]
     [SerializeField] private bool running;
@@ -99,7 +103,7 @@ public class APTask : MonoBehaviour
 
     // ===== 参数快照 =====
     private TaskParams CurrentParams() =>
-        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, counter, Settings.Current.ifNS, stationaryMode, run, jump, sweetScent, repel, lr, extraData);
+        new TaskParams(language, gameVersion, taskMode, function, speed, hitDuration, Settings.Current.currentCount, Settings.Current.ifNS, stationaryMode, run, jump, sweetScent, repel, lr, extraData0, extraData1);
 
 
 
@@ -132,6 +136,8 @@ public class APTask : MonoBehaviour
             Debug.LogWarning("[APTask] No EasyCon Connected.");
             return;
         }
+
+        counter = Settings.Current.currentCount;
 
         // 参数快照
         var snapshot = CurrentParams();

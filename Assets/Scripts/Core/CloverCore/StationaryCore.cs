@@ -8,7 +8,7 @@ public class FrLgStartersCore : GeneralCore
 
     protected override void Encounter()
     {
-        bool confirmFlag = config.extraData == 0;
+        bool confirmFlag = true;
         Press(GameKey.A); Wait(1500);
         while (DetectDialogue())
         {
@@ -56,8 +56,8 @@ public class RSEStartersCore : GeneralCore
         Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
-        if (config.extraData == 0) Press(GameKey.Left);
-        else if (config.extraData == 2) Press(GameKey.Right);
+        if (config.extraData0 == 0) Press(GameKey.Left);
+        else if (config.extraData0 == 2) Press(GameKey.Right);
         WaitTillBlack(pressA: true);
         WaitTillNotBlack();
     }
@@ -78,7 +78,7 @@ public class NormalHitACore : GeneralCore
     public NormalHitACore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
     protected override void Encounter()
     {
-        switch (config.extraData)
+        switch (config.extraData0)
         {
             case 0: break;
             case 1: Press(GameKey.Left); break;
@@ -106,7 +106,7 @@ public class GiftCore : GeneralCore
     public GiftCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
     protected override void Encounter()
     {
-        bool confirmFlag = config.extraData == 0;
+        bool confirmFlag = config.extraData0 == 0;
         Press(GameKey.A); Wait(1000);
         while (DetectDialogue())
         {
@@ -114,7 +114,7 @@ public class GiftCore : GeneralCore
             else
             {
                 Press(GameKey.B); Debug.Log("Pressed B.");
-                if (lowEffency) Wait(1500);
+                Wait(1500);
                 // Wait(2000); // the wait is to prevent the delay for video capture cards.
             }
         }
@@ -165,5 +165,40 @@ public class MewCore : GeneralCore
         ctrl.KeyUp(GameKey.B);
         Wait(1200);
         Press(GameKey.Right); Press(GameKey.Right);
+    }
+}
+
+public class CoinCore : GeneralCore
+{
+    public CoinCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
+    protected override void Encounter()
+    {
+
+        for (int i = 0; i < config.extraData1 + 1; i++)
+        {
+            Press(GameKey.A); Wait(1500);
+            Press(GameKey.A); Wait(1500);
+            for (int j = 0; j < config.extraData0; j++)
+            {
+                Press(GameKey.Down);
+            }
+            Press(GameKey.A); Wait(1500);
+            Press(GameKey.A); Wait(1500);
+            while (DetectDialogue())
+            {
+                Press(GameKey.B); Wait(200);
+            }
+            if (i != config.extraData1) AfterEncounter();
+        }
+    }
+
+    protected override bool ShinyDetect()
+    {
+        return ShinyDetectInBag(checkNum: config.extraData1 + 1);
+    }
+
+    protected override void AfterDetect()
+    {
+        SoftReset();
     }
 }

@@ -116,7 +116,7 @@ public class GeneralCore : TaskCore
     protected void SoftReset()
     {
         ctrl.KeysHit(SoftResetKeys);
-        Thread.Sleep(rand.Next(0, 300));
+        Wait(rand.Next(0, 300));
         while (!Detect(DetectionClass.BeforeEnter))
         {
             if (config.gameVersion == GameVersion.FrLg)
@@ -147,6 +147,7 @@ public class GeneralCore : TaskCore
             Press(GameKey.B);
             Wait(2000);
         }
+        else Wait(400);
     }
 
     protected void UseRepel()
@@ -211,7 +212,7 @@ public class GeneralCore : TaskCore
         }
     }
 
-    protected bool ShinyDetectInBag(int partyIdx = 1, bool checkFirst = false)
+    protected bool ShinyDetectInBag(int partyIdx = 1, bool checkFirst = false, int checkNum = 1)
     {
         // while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(200); }
         OpenMenu(); Wait(400);
@@ -224,7 +225,12 @@ public class GeneralCore : TaskCore
         WaitTillBlack();
         WaitTillNotBlack();
         Wait(500);
-        return Detect(config.gameVersion == GameVersion.FrLg ? DetectionClass.FrLg_s : DetectionClass.RSE_s);
+        for (int i = 0; i < checkNum; i++)
+        {
+            if (Detect(config.gameVersion == GameVersion.FrLg ? DetectionClass.FrLg_s : DetectionClass.RSE_s)) return true;
+            if (i != checkNum - 1) { Press(GameKey.Up); Wait(500); }
+        }
+        return false;
 
     }
 
@@ -241,6 +247,11 @@ public class GeneralCore : TaskCore
             ControlUtilsNS temp = ctrl as ControlUtilsNS;
             temp.Capture();
         }
+        this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = 0 });
+
+        Settings.Current.currentCount = 0;
+        Settings.Current.totalCount = 0;
+        Settings.SaveSettings();
     }
 
     protected virtual void Encounter() { throw new System.NotImplementedException(); }
@@ -249,7 +260,9 @@ public class GeneralCore : TaskCore
     protected virtual void AfterEncounter()
     {
         this.TriggerEvent(EventName.SetCounter, new SetCounterEventArgs { guid = owner.TaskId, count = owner.counter + 1 });
+        Settings.Current.currentCount++;
         Settings.Current.totalCount++;
+        Settings.SaveSettings();
     }
 
     public void Exe()

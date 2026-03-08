@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
@@ -10,20 +10,12 @@ public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
 {
     [Header("Binding Target")]
     public APTask target;
-    public string fieldName = "extraData";
+    public string fieldName = "extraData0";
     public StationaryMode stationaryMode;
 
     [Header("Dict: StationaryMode -> Options")]
-    public Dictionary<StationaryMode, List<string>> extraDict =
-        new Dictionary<StationaryMode, List<string>>
-        {
-            // { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
-            { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } },
-            { StationaryMode.NormalHitA, new List<string> { "不执行方向操作", "左", "右", "上", "下" } },
-            {StationaryMode.Gift, new List<string> { "需要确认是否获取", "不需要确认是否获取" }},
-
-
-        };
+    [SerializeField]
+    private Dictionary<StationaryMode, List<string>> extraDict;
 
     private TMP_Dropdown dropdown;
     private FieldInfo field;
@@ -32,6 +24,22 @@ public class AlphaExtraEnumDropdownPlugin : MonoBehaviour
 
     void Awake()
     {
+
+        extraDict = fieldName == "extraData0" ?
+        new Dictionary<StationaryMode, List<string>>
+        {
+            // { StationaryMode.RSEStarters, new List<string> { "Treecko", "Torchic", "Mudkip" } }
+            { StationaryMode.RSEStarters, new List<string> { "木守宫", "火雉鸡", "水跃鱼" } },
+            { StationaryMode.NormalHitA, new List<string> { "不执行方向操作", "左", "右", "上", "下" } },
+            {StationaryMode.Gift, new List<string> { "需要确认是否获取", "不需要确认是否获取" }},
+            {StationaryMode.Coin, new List<string> { "第一只", "第二只", "第三只", "第四只", "第五只" }}
+
+
+        } : new Dictionary<StationaryMode, List<string>>
+        {
+            { StationaryMode.Coin, new List<string> {"买一只", "买两只", "买三只", "买四只", "买五只" } },
+        };
+
         dropdown = GetComponent<TMP_Dropdown>();
 
         Assert.IsNotNull(target, "[AlphaExtraEnumDropdownPlugin] target is null.");

@@ -32,7 +32,7 @@ namespace test
     { DetectionClass.BlankDialogue, 0.5f },
     { DetectionClass.RSE_s, 0.5f },
     { DetectionClass.RSE_ns, 0.5f },
-    { DetectionClass.ShinyStar, 0.6f },
+    { DetectionClass.ShinyStar, 0.65f },
     { DetectionClass.Next, 0.25f },
     { DetectionClass.CanRun, 0.5f },
     { DetectionClass.FrLg_s, 0.5f },
@@ -59,7 +59,7 @@ namespace test
             // detectorTester = GetComponent<SentisTester>();
             detector = Detector.Init(initSize: 1, maxSize: 2, modelAsset: modelAsset, classThresholds: classThresholds);
 
-            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithTextObs("PotPlayer");
+            List<IntPtr> windows = Win32Utils.FindDesktopChildWindowsWithTextObs("Playback");
             if (windows.Count == 0)
             {
                 Debug.LogWarning("❌ 未找到目标窗口");

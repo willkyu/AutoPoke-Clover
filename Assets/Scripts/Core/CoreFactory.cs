@@ -20,6 +20,7 @@ public class CoreFactory
                 StationaryMode.NormalHitA => new NormalHitACore(hwnd, owner, p),
                 StationaryMode.Gift => new GiftCore(hwnd, owner, p),
                 StationaryMode.Mew => new MewCore(hwnd, owner, p),
+                StationaryMode.Coin => new CoinCore(hwnd, owner, p),
                 _ => throw new ArgumentOutOfRangeException(
                         nameof(p.stationaryMode), p.stationaryMode, "Unsupported StationaryMode")
             },
