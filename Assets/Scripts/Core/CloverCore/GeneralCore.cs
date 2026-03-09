@@ -168,11 +168,12 @@ public class GeneralCore : TaskCore
 
     protected void OpenMenu()
     {
-        while (!Detect(DetectionClass.Options))
-        {
-            if (detectRes.Contains(DetectionClass.Dialogue)) Press(GameKey.B);//in case stuck in dialogue
-            Press(GameKey.Start); Wait(500); if (lowEffency) Wait(800); // prevent keep open and close menu
-        }
+        // while (!Detect(DetectionClass.Options))
+        // {
+        while (DetectDialogue()) Press(GameKey.B);//in case stuck in dialogue
+        // if (detectRes.Contains(DetectionClass.Dialogue)) Press(GameKey.B);//in case stuck in dialogue
+        Press(GameKey.Start); Wait(500); // prevent keep open and close menu
+        // }
     }
 
     protected void Run()
