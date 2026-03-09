@@ -171,7 +171,7 @@ public class GeneralCore : TaskCore
         while (!Detect(DetectionClass.Options))
         {
             if (detectRes.Contains(DetectionClass.Dialogue)) Press(GameKey.B);//in case stuck in dialogue
-            Press(GameKey.Start); Wait(300); if (lowEffency) Wait(1000);
+            Press(GameKey.Start); Wait(500); if (lowEffency) Wait(800); // prevent keep open and close menu
         }
     }
 

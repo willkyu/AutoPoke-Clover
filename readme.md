@@ -1,6 +1,15 @@
 # AutoPoke: Clover
 
+
 宝可梦三代自动化刷闪工具，支持GB Operator、GBA模拟器、NS端火红叶绿。
+AutoPoke is an automation tool for Pokemon Gen 3 shiny hunting workflows.
+
+- Supports GB Operator, GBA emulators, and Nintendo Switch capture workflows.
+- Includes starter hunting, stationary encounters, gift Pokemon, and fishing modes.
+- Provides counters, auto screenshot on shiny, key binding, and notifications.
+- Can integrate with OBS WebSocket for automatic shiny recording.
+
+For detailed usage instructions, see the Chinese section below.
 
 > 交流QQ群985084478
 
@@ -13,6 +22,7 @@
 - 各种路闪，支持自动续喷雾（可能有bug），甜甜香气等。使用Move
 - 各种礼物宝可梦，如伊布、买的鲤鱼王，使用Stationary中的Gift
 - 钓鱼，使用Fish
+- 游戏厅宝可梦，使用Coin
 
 
 - 简单的计数功能
@@ -42,3 +52,4 @@
 - [x] Finish the framwork.
 - [ ] Replace `win32api` with `Window Graphics Capture` for capturing window image.
 - [ ] More functions.
+
