@@ -218,14 +218,14 @@ public class GeneralCore : TaskCore
         // while (!Detect(DetectionClass.Options)) { Press(GameKey.Start); Wait(200); }
         OpenMenu(); Wait(400);
         for (int i = 0; i < partyIdx; i++) { Press(GameKey.Down); Wait(200); }
-        // Press(GameKey.A);
-        WaitTillBlack(pressA: true);
+        Press(GameKey.A);
+        WaitTillBlack();
         WaitTillNotBlack();
         if (!checkFirst) { Press(GameKey.Up); Wait(200); Press(GameKey.Up); Wait(200); }
         Press(GameKey.A); Wait(200); Press(GameKey.A);
         WaitTillBlack();
         WaitTillNotBlack();
-        Wait(500);
+        Wait(600);
         for (int i = 0; i < checkNum; i++)
         {
             if (Detect(config.gameVersion == GameVersion.FrLg ? DetectionClass.FrLg_s : DetectionClass.RSE_s)) return true;
