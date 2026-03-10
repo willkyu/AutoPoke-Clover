@@ -111,8 +111,8 @@ public class GeneralCore : TaskCore
         return detector.DetectBlack(Win32Utils.CaptureWindow(hwnd, out _, out _), minRatio);
     }
     protected bool DetectDialogue() { return Detect(DetectionClass.Dialogue) || detectRes.Contains(DetectionClass.BlankDialogue); }
-    protected void WaitTillBlack(bool pressA = false, bool wait = true) { while (!DetectBlack()) { if (pressA) Press(GameKey.A, wait: wait); else if (wait) Wait(200); } }
-    protected void WaitTillNotBlack(bool wait = true) { while (DetectBlack()) if (wait) Wait(200); Wait(300); }
+    protected void WaitTillBlack(bool pressA = false, bool wait = true) { while (!DetectBlack()) { if (pressA) Press(GameKey.A, wait: false); else if (wait) Wait(100); } }
+    protected void WaitTillNotBlack(bool wait = true) { while (DetectBlack()) if (wait) Wait(100); Wait(300); }
     protected void SoftReset()
     {
         ctrl.KeysHit(SoftResetKeys);

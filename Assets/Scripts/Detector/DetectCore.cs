@@ -61,7 +61,7 @@ public class DetectCore : IDisposable
     }
 
     // —— 纯CPU：计算黑像素比例 —— //
-    public float ComputeBlackPercent(byte[] rawData, float threshold = 20f)
+    public float ComputeBlackPercent(byte[] rawData, float threshold = 45f)
     {
         int black = 0;
         int total = rawData.Length / 3;

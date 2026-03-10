@@ -9,18 +9,19 @@ public class FrLgStartersCore : GeneralCore
     protected override void Encounter()
     {
         bool confirmFlag = true;
-        Press(GameKey.A); Wait(1500);
+        while (!DetectDialogue())
+        { Press(GameKey.A); Wait(1500); }
         while (DetectDialogue())
         {
             if (confirmFlag && detectRes.Contains(DetectionClass.Options)) { Press(GameKey.A); confirmFlag = false; Wait(1500); }
             else
             {
                 Press(GameKey.B); Debug.Log("Pressed B.");
+                if (confirmFlag) Wait(1500);
                 // if (lowEffency) Wait(1500);
                 // Wait(2000); // the wait is to prevent the delay for video capture cards.
             }
         }
-        Debug.Log("no dialogue");
         while (!DetectDialogue()) Wait(500);
         while (DetectDialogue()) Press(GameKey.B);
 
