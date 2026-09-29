@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.hecomi.uwindowcapture": "https://github.com/hecomi/uWindowCapture.git#upm",
     "com.unity.burst": "1.8.21",
     "com.unity.ext.nunit": "1.0.6",
     "com.unity.feature.2d": "2.0.1",

@@ -142,6 +142,7 @@ public class Detector : IDisposable
         try
         {
             var ratio = detectCores[detectorId].ComputeBlackPercent(image);
+            // UnityEngine.Debug.Log(ratio);
             return ratio > (blackThresholds ?? this.blackThresholds);
         }
         finally

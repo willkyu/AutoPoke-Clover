@@ -7,7 +7,6 @@ using System.Threading;
 using UnityEngine;
 
 
-
 public static class Win32Utils
 {
     private static float? scaleRatio = null;

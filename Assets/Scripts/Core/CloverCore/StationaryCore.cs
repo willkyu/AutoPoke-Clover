@@ -102,6 +102,48 @@ public class NormalHitACore : GeneralCore
     }
 }
 
+public class RockSmashCore : GeneralCore
+{
+    public RockSmashCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }
+    protected override void Encounter()
+    {
+        while (true)
+        {
+            if (TryEncounter()) return;
+            SoftReset();
+        }
+    }
+
+    bool TryEncounter()
+    {
+        int waited_time = 0;
+
+        Press(GameKey.A); Wait(500); Press(GameKey.A);
+        while (DetectDialogue()) Press(GameKey.A); Wait(500);
+        UnityEngine.Debug.Log("no dialogue");
+        while (!DetectBlack())
+        {
+            Wait(100);
+            waited_time += 100;
+            if (waited_time > 6000) return false;
+        }
+        waited_time = 0;
+        UnityEngine.Debug.Log("encounter");
+        WaitTillNotBlack();
+        return true;
+    }
+
+    protected override bool ShinyDetect()
+    {
+        return ShinyDetectInBattle(checkEnemy: true, SL: true);
+    }
+
+    protected override void AfterDetect()
+    {
+        SoftReset();
+    }
+}
+
 public class GiftCore : GeneralCore
 {
     public GiftCore(IntPtr hwnd, APTask owner, TaskParams config) : base(hwnd, owner, config) { }

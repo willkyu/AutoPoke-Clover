@@ -198,8 +198,8 @@ public class GeneralCore : TaskCore
             UnityEngine.Debug.Log("Not shiny.");
             if (!SL)
             {
-                Press(GameKey.A);
-                Press(GameKey.A);
+                Press(GameKey.B);
+                Press(GameKey.B);
                 while (!Detect(DetectionClass.CanRun)) { Press(GameKey.B); Wait(200); }
             }
             return false;
