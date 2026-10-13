@@ -148,6 +148,8 @@ public class GeneralCore : TaskCore
             Wait(2000);
         }
         else Wait(400);
+        if (config.gameVersion == GameVersion.E)
+            Wait(17 * owner.counter); // 17ms = cell(1000/60) = 1frame
     }
 
     protected void UseRepel()
